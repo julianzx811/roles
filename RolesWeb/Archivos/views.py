@@ -28,14 +28,16 @@ def index(request):
         # reading a cell
         print(worksheet["C1"].value)
 
-        excel_data = list()
+        excel_data = []
         # iterating over the rows and
         # getting value from each cell in row
-        for row in worksheet.iter_rows():
-            row_data = list()
+        for row in worksheet.iter_rows(min_row=12, max_row=59, max_col=8):
+            row_data = []
             for cell in row:
-                row_data.append(str(cell.value))
-                print(cell.value)
-            excel_data.append(row_data)
+                if(str(cell.value)!='None'):
+                    row_data.append(str(cell.value))
+                    print(cell.value)
+            if len(row_data) > 1:
+                excel_data.append(row_data)
 
         return render(request, "Archivos/index.html", {"excel_data": excel_data})
