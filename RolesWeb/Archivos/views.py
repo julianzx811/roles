@@ -26,7 +26,7 @@ def index(request):
         print(active_sheet)
 
         # reading a cell
-        print(worksheet["A1"].value)
+        print(worksheet["C1"].value)
 
         excel_data = list()
         # iterating over the rows and
