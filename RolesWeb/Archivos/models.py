@@ -8,4 +8,4 @@ class Estudiante(models.Model):
     email_personal = models.EmailField()
     telefono = models.IntegerField()
     nombre = models.CharField(max_length=50)
-    periodo_lectivo = models.CharField(max_length=10, default='2023-1')
+    periodo_lectivo = models.CharField(max_length=10)
