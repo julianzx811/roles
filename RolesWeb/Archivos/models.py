@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Estudiante(models.Model):
     programa = models.CharField(max_length=10)
-    codigo = models.IntegerField()
+    codigo = models.CharField(max_length=10)
     email_institucional = models.EmailField()
     email_personal = models.EmailField()
     telefono = models.IntegerField()
