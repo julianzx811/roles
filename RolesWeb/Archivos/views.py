@@ -8,7 +8,6 @@ def index(request):
         return render(request, "Archivos/index.html", {})
     else:
         excel_file = request.FILES["excel_file"]
-
         # you may put validations here to check extension or file size
 
         wb = openpyxl.load_workbook(excel_file)
@@ -39,5 +38,6 @@ def index(request):
                     print(cell.value)
             if len(row_data) > 1:
                 excel_data.append(row_data)
+        print(excel_data)
 
         return render(request, "Archivos/index.html", {"excel_data": excel_data})
