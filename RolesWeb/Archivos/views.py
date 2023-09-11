@@ -1,6 +1,7 @@
 import openpyxl
 from django.http import HttpResponse
 from django.shortcuts import render
+from .models import Estudiante
 
 
 def index(request):
@@ -30,7 +31,7 @@ def index(request):
         excel_data = []
         # iterating over the rows and
         # getting value from each cell in row
-        for row in worksheet.iter_rows(min_row=12, max_row=59, max_col=8):
+        for row in worksheet.iter_rows(min_row=14, max_row=59, max_col=8):
             row_data = []
             for cell in row:
                 if(str(cell.value)!='None'):
@@ -39,5 +40,9 @@ def index(request):
             if len(row_data) > 1:
                 excel_data.append(row_data)
         print(excel_data)
+        excel_data
+        for datos in excel_data:
+            est1 = Estudiante(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6])
+            est1.save()
 
         return render(request, "Archivos/index.html", {"excel_data": excel_data})
