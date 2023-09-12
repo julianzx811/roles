@@ -24,12 +24,16 @@
 
         <p></p>
         <hr>
-
-        {% for row in excel_data %}
-            {% for cell in row %}
-                {{ cell }}&nbsp;&nbsp;
+        {% if excel_data %}
+            {% for row in excel_data %}
+                {% for cell in row %}
+                    {{ cell }}&nbsp;&nbsp;
+                {% endfor %}
+                <br>
             {% endfor %}
-            <br>
-        {% endfor %}
+        {% else %}
+        <p>{{error}}</p>
+        {% endif %}
+        
     </body>
 </html>
