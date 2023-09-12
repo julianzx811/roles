@@ -9,6 +9,8 @@ def index(request):
         return render(request, "Archivos/index.html", {})
     else:
         excel_file = request.FILES["excel_file"]
+        periodo = request.POST.get('file_type')
+        print("periodo",periodo)
         # you may put validations here to check extension or file size
 
         wb = openpyxl.load_workbook(excel_file)
@@ -42,7 +44,7 @@ def index(request):
         print(excel_data)
         excel_data
         for datos in excel_data:
-            est1 = Estudiante(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6])
+            est1 = Estudiante(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6],periodo)
             est1.save()
 
         return render(request, "Archivos/index.html", {"excel_data": excel_data})
