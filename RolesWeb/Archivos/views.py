@@ -5,15 +5,18 @@ from .models import Estudiante
 
 
 def index(request):
+        return render(request, "Archivos/index.html")
+
+def cargarArchivoEstudiantes(request):
     if "GET" == request.method:
-        return render(request, "Archivos/index.html", {})
+        return render(request, "Archivos/cargaEstudiantes.html", {})
     else:
         try:
             excel_file = request.FILES["excel_file"]
             periodo = request.POST.get('file_type')
             print("periodo",periodo)
             # you may put validations here to check extension or file size
-
+            
             wb = openpyxl.load_workbook(excel_file)
 
             # getting all sheets
@@ -42,14 +45,13 @@ def index(request):
                         print(cell.value)
                 if len(row_data) > 1:
                     excel_data.append(row_data)
-            print(excel_data)
             excel_data
             for datos in excel_data:
                 est1 = Estudiante(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6],periodo)
                 est1.save()
-            return render(request, "Archivos/index.html", {"excel_data": excel_data})
-        except  Exception as err :
-            return render(request, "Archivos/index.html", {"error": err})
-
+            
+            return render(request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data})
+        except Exception as error :
+            return render(request, "Archivos/cargaEstudiantes.html", {"error": error})
 
         
