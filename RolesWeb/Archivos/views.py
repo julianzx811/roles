@@ -37,7 +37,7 @@ def cargarArchivoEstudiantes(request):
             excel_data = []
             # iterating over the rows and
             # getting value from each cell in row
-            for row in worksheet.iter_rows(min_row=14, max_row=59, max_col=8):
+            for row in worksheet.iter_rows(min_row=14, max_col=8):
                 row_data = []
                 for cell in row:
                     if(str(cell.value)!='None'):
