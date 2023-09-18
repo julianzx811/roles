@@ -2,6 +2,7 @@ import openpyxl
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Estudiante
+import psycopg2
 
 
 def index(request):
@@ -14,25 +15,26 @@ def cargarArchivoEstudiantes(request):
         try:
             excel_file = request.FILES["excel_file"]
             periodo = request.POST.get('file_type')
-            print("periodo",periodo)
+            
+            #print("periodo",periodo)
             # you may put validations here to check extension or file size
             
             wb = openpyxl.load_workbook(excel_file)
 
             # getting all sheets
             sheets = wb.sheetnames
-            print(sheets)
+            #print(sheets)
 
             # getting a particular sheet
             worksheet = wb["Sheet1"]
-            print(worksheet)
+            #print(worksheet)
 
             # getting active sheet
             active_sheet = wb.active
-            print(active_sheet)
+            #print(active_sheet)
 
             # reading a cell
-            print(worksheet["C1"].value)
+            #print(worksheet["C1"].value)
 
             excel_data = []
             # iterating over the rows and
@@ -42,7 +44,7 @@ def cargarArchivoEstudiantes(request):
                 for cell in row:
                     if(str(cell.value)!='None'):
                         row_data.append(str(cell.value))
-                        print(cell.value)
+                        #print(cell.value)
                 if len(row_data) > 1:
                     excel_data.append(row_data)
             excel_data
@@ -52,6 +54,7 @@ def cargarArchivoEstudiantes(request):
             
             return render(request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data})
         except Exception as error :
-            return render(request, "Archivos/cargaEstudiantes.html", {"error": error})
+            print(error)
+            return render(request, "Archivos/cargaEstudiantes.html", {"error": str(error)})
 
         
