@@ -6,8 +6,8 @@ class Plan_estudios(models.Model):
 
 
 class Estudiante(models.Model):
+    codigo = models.CharField(primary_key=True, max_length=255, null=False)
     programa = models.CharField(max_length=255, null=False)
-    codigo = models.CharField(max_length=255, null=False)
     email_institucional = models.EmailField(null=False)
     email_personal = models.EmailField(null=False)
     telefono = models.CharField(max_length=255, null=False)
@@ -16,7 +16,7 @@ class Estudiante(models.Model):
     cedula = models.CharField(max_length=255, null=True)
     celular = models.CharField(max_length=255, null=True)
     periodo_lectivo = models.CharField(max_length=255, default="2024-1", null=False)
-    plan_estudios = models.ForeignKey(
+    plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
 
