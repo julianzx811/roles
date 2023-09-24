@@ -11,45 +11,28 @@ def index(request):
 
 
 def cargarArchivoEstudiantes(request):
-    if "GET" == request.method:
+    if request.method == "GET":
         return render(request, "Archivos/cargaEstudiantes.html", {})
     else:
         try:
             excel_file = request.FILES["excel_file"]
             periodo = request.POST.get("file_type")
 
-            # print("periodo",periodo)
-            # you may put validations here to check extension or file size
-
             wb = openpyxl.load_workbook(excel_file)
-
-            # getting all sheets
-            sheets = wb.sheetnames
-            # print(sheets)
-
-            # getting a particular sheet
             worksheet = wb["Sheet1"]
-            # print(worksheet)
-
-            # getting active sheet
-            active_sheet = wb.active
-            # print(active_sheet)
-
-            # reading a cell
-            # print(worksheet["C1"].value)
 
             excel_data = []
-            # iterating over the rows and
-            # getting value from each cell in row
+
             for row in worksheet.iter_rows(min_row=14, max_col=8):
                 row_data = []
                 for cell in row:
                     if str(cell.value) != "None":
                         row_data.append(str(cell.value))
-                        # print(cell.value)
-                if len(row_data) > 1:
+                if len(row_data) >= 7:  # Verificar si hay suficientes elementos en la lista
                     excel_data.append(row_data)
-            excel_data
+                else:
+                    print(f"La fila no tiene suficientes elementos: {row_data}")
+
             for datos in excel_data:
                 est1 = Estudiante(
                     codigo=datos[2],
@@ -70,7 +53,6 @@ def cargarArchivoEstudiantes(request):
             return render(
                 request, "Archivos/cargaEstudiantes.html", {"error": str(error)}
             )
-
 
 def cargarArchivoEstudiantesDos(request):
     if "GET" == request.method:
@@ -98,17 +80,18 @@ def cargarArchivoEstudiantesDos(request):
             # print(active_sheet)
 
             # reading a cell
-            # print(worksheet["C1"].value)
+            print(worksheet["C1"].value)
 
             excel_data = []
             # iterating over the rows and
             # getting value from each cell in row
             for row in worksheet.iter_rows(min_row=14, max_col=8):
+                print("Impresion error",row)
                 row_data = []
                 for cell in row:
                     if str(cell.value) != "None":
                         row_data.append(str(cell.value))
-                        # print(cell.value)
+                        print(cell.value)
                 if len(row_data) > 1:
                     excel_data.append(row_data)
             excel_data
