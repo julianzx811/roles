@@ -44,14 +44,14 @@
               <div class="col-lg-8" style="float: left;">
                 <form action="{% url "cargaEstudiantes" %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="display-4">Carga Estudiantes</div>
+                    <div class="display-4">Carga Estudiantes Aspirantes</div>
                     <p></p>
                     <div class="mb-3">
                         <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
                         <select class="form-select" id="file_type" name="file_type" style="border: 1px solid black; padding: 5px;" required>
-                            <option value="2023-2" selected>2024-1</option>
-                            <option value="2024-1">2024-2</option>
-                            <option value="2024-2">2025-1</option>
+                            <option value="Periodo Lectivo" selected>2024-1</option>
+                            <option value="2023-2">2024-2</option>
+                            <option value="2024-1">2025-1</option>
                         </select>
                         <div class="invalid-feedback">
                             Por favor seleccione un periodo lectivo
@@ -78,13 +78,6 @@
                 <hr>
                 {% if excel_data %}
                 <div class="alert_exito">
-                    <script>
-                    {% if excel_data %}
-                        setTimeout(function() {
-                        window.location.href = l="/cargaEstudiantesDos/"; // Replace with your actual URL
-                        }, 2000);
-                    {% endif %}
-                    </script>
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                     El archivo se cargó con éxito
                   </div>

@@ -80,15 +80,14 @@ WSGI_APPLICATION = "RolesWeb.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'practicas',
         'USER': 'postgres',
-        'PASSWORD': '12345',
+        'PASSWORD': '7878',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
-
 
 
 # Password validation
