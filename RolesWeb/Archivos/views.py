@@ -60,13 +60,17 @@ def cargarArchivoEstudiantesDos(request):
         try:
             excel_file = request.FILES["excel_file"]
             wb = openpyxl.load_workbook(excel_file)
-            worksheet = wb["ING SISTEMAS 2023 2"] # Utiliza la hoja activa o ajusta según la hoja que necesites
+            worksheet = wb["ING SISTEMAS 2023 2"] 
 
             excel_data = []
 
-            for row in worksheet.iter_rows(values_only=True):
-                row_data = list(row)
-                excel_data.append(row_data)
+            for row in worksheet.iter_rows(min_row=4, max_col=28):
+                row_data = []
+                for cell in row:
+                    if str(cell.value) != "None":
+                        row_data.append(str(cell.value))
+                if len(row_data) >= 7:  # Verificar si hay suficientes elementos en la lista
+                    excel_data.append(row_data)
 
             for row in excel_data:
                 # Verifica si la fila tiene suficientes elementos para procesar
