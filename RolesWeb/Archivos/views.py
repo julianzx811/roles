@@ -33,7 +33,12 @@ def cargarArchivoEstudiantes(request):
                     print(f"La fila no tiene suficientes elementos: {row_data}")
 
             for datos in excel_data:
-                est1 = Estudiante(
+
+                if (Estudiante.objects.filter(codigo=datos[2])):
+                        est1 = Estudiante.objects.filter(codigo=datos[2])[0]
+                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4])
+                else:
+                    est1 = Estudiante(
                     codigo=datos[2],
                     programa=datos[1],
                     email_institucional=datos[3],
@@ -43,6 +48,7 @@ def cargarArchivoEstudiantes(request):
                     periodo_lectivo=periodo,
                 )
                 est1.save()
+                
 
             return render(
                 request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data}
@@ -74,26 +80,33 @@ def cargarArchivoEstudiantesDos(request):
 
             for row in excel_data:
                 # Verifica si la fila tiene suficientes elementos para procesar
-                if len(row) >= 28:  # Ajusta el número según la cantidad de columnas en tu Excel
+                if len(row) >= 1:  # Ajusta el número según la cantidad de columnas en tu Excel
                     # Crear un objeto Estudiante
-                    print(row)
+                    
                     plan_estudios = Plan_estudios(
                         jornada=row[12]
                     )
                     plan_estudios.save()
-                    estudiante = Estudiante(
-                        programa=row[11],
-                        codigo=row[7],
-                        email_institucional=row[10],
-                        email_personal=row[10],
-                        telefono=row[9],
-                        nombre=row[5],
-                        apellidos=row[6],
-                        cedula=row[8],
-                        celular=row[9],
-                        # Ajusta esto para el campo plan_estudios
-                    )
-                    estudiante.save()
+                    
+                    
+                    if (Estudiante.objects.filter(codigo=row[7])):
+                        estudiante = Estudiante.objects.filter(codigo=row[7])[0]
+                        Estudiante.objects.filter(codigo=row[7]).update(nombre=row[5], apellidos=row[6], cedula=row[8], celular=row[9])
+                    else:
+                    
+                        estudiante = Estudiante(
+                            programa=row[11],
+                            codigo=row[7],
+                            email_institucional=row[10],
+                            email_personal=row[10],
+                            telefono=row[9],
+                            nombre=row[5],
+                            apellidos=row[6],
+                            cedula=row[8],
+                            celular=row[9],
+                            # Ajusta esto para el campo plan_estudios
+                        )
+                        estudiante.save()
 
                     # Crear un objeto Aspirantes relacionado con el estudiante
                     aspirantes = Aspirantes(
@@ -109,17 +122,31 @@ def cargarArchivoEstudiantesDos(request):
                     )
                     aspirantes.save()
 
+                    
+                    if(len(row)>23):
                     # Crear un objeto Contrato relacionado con el estudiante
-                    contrato = Contrato(
-                        tipo_Contrato=row[21],
-                        fecha_Inicio=row[22],
-                        fecha_Final=row[23],
-                        encargado_Proceso_Seleccion=row[24],
-                        datos_Tutor_O_Jefe_Directivo=row[25],
-                        documentos_Pendientes=row[26],
-                        sector=row[27],
-                    )
-                    contrato.save()
+                        print('entro If')
+                        contrato = Contrato(
+                            tipo_Contrato=row[21],
+                            fecha_Inicio=row[22],
+                            fecha_Final=row[23],
+                            encargado_Proceso_Seleccion=row[24],
+                            datos_Tutor_O_Jefe_Directivo=row[25],
+                            documentos_Pendientes=row[26],
+                            sector=row[27],
+                        )
+                        contrato.save()
+                    else:
+                        contrato = Contrato(
+                            tipo_Contrato='null',
+                            fecha_Inicio='null',
+                            fecha_Final='null',
+                            encargado_Proceso_Seleccion='null',
+                            datos_Tutor_O_Jefe_Directivo='null',
+                            documentos_Pendientes='null',
+                            sector='null',
+                        )
+                        contrato.save()
 
                     # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                     estado_practica = Estado_Practica(
