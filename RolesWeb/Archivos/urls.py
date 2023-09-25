@@ -6,8 +6,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("cargaEstudiantes/", views.cargarArchivoEstudiantes, name="cargaEstudiantes"),
     path(
-        "cargaEstudiantesDos/",
-        views.cargarArchivoEstudiantesDos,
-        name="cargaEstudiantesDos",
+        "cargaEstudiantesDos/",views.cargarArchivoEstudiantesDos,name="cargaEstudiantesDos",
     ),
 ]

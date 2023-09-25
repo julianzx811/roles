@@ -78,13 +78,13 @@
                 <hr>
                 {% if excel_data %}
                 <div class="alert_exito">
+                  {% if excel_data %}
                     <script>
-                    {% if excel_data %}
-                        setTimeout(function() {
-                        window.location.href = l="/cargaEstudiantesDos/"; // Replace with your actual URL
-                        }, 2000);
-                    {% endif %}
+                      setTimeout(function() {
+                          window.location.href = "/cargaEstudiantesDos/"; // Replace with your actual URL
+                      }, 2000);
                     </script>
+                  {% endif %}
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                     El archivo se cargó con éxito
                   </div>
