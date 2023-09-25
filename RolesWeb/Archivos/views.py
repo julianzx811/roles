@@ -18,7 +18,7 @@ def cargarArchivoEstudiantes(request):
             periodo = request.POST.get("file_type")
 
             wb = openpyxl.load_workbook(excel_file)
-            worksheet = wb["ING SISTEMAS 2023 2"]
+            worksheet = wb["Sheet1"]
 
             excel_data = []
 
@@ -60,7 +60,7 @@ def cargarArchivoEstudiantesDos(request):
         try:
             excel_file = request.FILES["excel_file"]
             wb = openpyxl.load_workbook(excel_file)
-            worksheet = wb.active  # Utiliza la hoja activa o ajusta según la hoja que necesites
+            worksheet = wb["ING SISTEMAS 2023 2"] # Utiliza la hoja activa o ajusta según la hoja que necesites
 
             excel_data = []
 
