@@ -80,7 +80,7 @@ def cargarArchivoEstudiantesDos(request):
 
             for row in excel_data:
                 # Verifica si la fila tiene suficientes elementos para procesar
-                if len(row) >= 1:  # Ajusta el número según la cantidad de columnas en tu Excel
+                if len(row) >= 28:  # Ajusta el número según la cantidad de columnas en tu Excel
                     # Crear un objeto Estudiante
                     
                     plan_estudios = Plan_estudios(
