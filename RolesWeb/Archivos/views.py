@@ -65,7 +65,20 @@ def cargarArchivoEstudiantes(request):
 
 def cargarArchivoEstudiantesDos(request):
     if request.method == "GET":
-        return render(request, "Archivos/cargaEstudiantesDos.html", {})
+        # Realiza una consulta en la base de datos para verificar si existen datos en las columnas especificadas
+        if Estudiante.objects.filter(
+            programa__isnull=False,
+            email_institucional__isnull=False,
+            email_personal__isnull=False,
+            telefono__isnull=False,
+            nombre__isnull=False,
+            periodo_lectivo__isnull=False,
+        ).exists():
+            # Si existen datos, permite la carga
+            return render(request, "Archivos/cargaEstudiantesDos.html", {})
+        else:
+            # Si no existen datos, muestra un mensaje de error
+            return render(request, "Archivos/cargaEstudiantesDos.html", {"error": "Por favor, primero carga datos en cargarArchivoEstudiantes."})
     else:
         try:
             excel_file = request.FILES["excel_file"]
@@ -79,13 +92,13 @@ def cargarArchivoEstudiantesDos(request):
                 for cell in row:
                     if str(cell.value) != "None":
                         row_data.append(str(cell.value))
-                if len(row_data) >= 7:  # Verificar si hay suficientes elementos en la lista
+                if len(row_data) >= 7:  
                     excel_data.append(row_data)
 
             for row in excel_data:
-                # Verifica si la fila tiene suficientes elementos para procesar
-                if len(row) >= 28:  # Ajusta el número según la cantidad de columnas en tu Excel
-                    # Crear un objeto Estudiante
+
+                if len(row) >= 28:
+
                     
                     plan_estudios = Plan_estudios(
                         jornada=row[12]
@@ -112,7 +125,7 @@ def cargarArchivoEstudiantesDos(request):
                         )
                         estudiante.save()
 
-                    # Crear un objeto Aspirantes relacionado con el estudiante
+
                     aspirantes = Aspirantes(
                         periodo_practica=row[1],
                         aprobación_Programa=row[2],
@@ -128,7 +141,7 @@ def cargarArchivoEstudiantesDos(request):
 
                     
                     if(len(row)>23):
-                    # Crear un objeto Contrato relacionado con el estudiante
+
                         print('entro If')
                         contrato = Contrato(
                             tipo_Contrato=row[21],
@@ -152,7 +165,6 @@ def cargarArchivoEstudiantesDos(request):
                         )
                         contrato.save()
 
-                    # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                     estado_practica = Estado_Practica(
                         codigo_estudiante=estudiante,
                         practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[18],
@@ -172,3 +184,6 @@ def cargarArchivoEstudiantesDos(request):
             return render(
                 request, "Archivos/cargaEstudiantesDos.html", {"error": str(error)}
             )
+
+
+
