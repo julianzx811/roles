@@ -64,6 +64,7 @@ def cargarArchivoEstudiantes(request):
             )
 
 def cargarArchivoEstudiantesDos(request):
+    existe = Estudiante.objects.exists()
     if request.method == "GET":
         return render(request, "Archivos/cargaEstudiantesDos.html", {})
     else:
@@ -96,7 +97,7 @@ def cargarArchivoEstudiantesDos(request):
                     if (Estudiante.objects.filter(codigo=row[7])):
                         estudiante = Estudiante.objects.filter(codigo=row[7])[0]
                         Estudiante.objects.filter(codigo=row[7]).update(nombre=row[5], apellidos=row[6], cedula=row[8], celular=row[9])
-                    else:
+                    
                     
                         estudiante = Estudiante(
                             programa=row[11],
@@ -112,60 +113,60 @@ def cargarArchivoEstudiantesDos(request):
                         )
                         estudiante.save()
 
-                    # Crear un objeto Aspirantes relacionado con el estudiante
-                    aspirantes = Aspirantes(
-                        periodo_practica=row[1],
-                        aprobación_Programa=row[2],
-                        matriculado_Academica_y_Financieramente=row[4],
-                        inscripcion=row[13],
-                        curso_induccion_y_rl=row[14],
-                        ruta_preparacion_vida_laboral=row[15],
-                        envio_hv=row[16],
-                        titulo_tecnico_o_tecnologo=row[17],
-                        codigo_estudiante=estudiante,
-                    )
-                    aspirantes.save()
-
-                    
-                    if(len(row)>23):
-                    # Crear un objeto Contrato relacionado con el estudiante
-                        print('entro If')
-                        contrato = Contrato(
-                            tipo_Contrato=row[21],
-                            fecha_Inicio=row[22],
-                            fecha_Final=row[23],
-                            encargado_Proceso_Seleccion=row[24],
-                            datos_Tutor_O_Jefe_Directivo=row[25],
-                            documentos_Pendientes=row[26],
-                            sector=row[27],
+                        # Crear un objeto Aspirantes relacionado con el estudiante
+                        aspirantes = Aspirantes(
+                            periodo_practica=row[1],
+                            aprobación_Programa=row[2],
+                            matriculado_Academica_y_Financieramente=row[4],
+                            inscripcion=row[13],
+                            curso_induccion_y_rl=row[14],
+                            ruta_preparacion_vida_laboral=row[15],
+                            envio_hv=row[16],
+                            titulo_tecnico_o_tecnologo=row[17],
+                            codigo_estudiante=estudiante,
                         )
-                        contrato.save()
-                    else:
-                        contrato = Contrato(
-                            tipo_Contrato='null',
-                            fecha_Inicio='null',
-                            fecha_Final='null',
-                            encargado_Proceso_Seleccion='null',
-                            datos_Tutor_O_Jefe_Directivo='null',
-                            documentos_Pendientes='null',
-                            sector='null',
-                        )
-                        contrato.save()
+                        aspirantes.save()
 
-                    # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
-                    estado_practica = Estado_Practica(
-                        codigo_estudiante=estudiante,
-                        practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[18],
-                        estado_ubicación=row[19],
-                        comentarios=row[20],
-                        item=aspirantes,
-                        id_contrato=contrato,
-                    )
-                    estado_practica.save()
+                        
+                        if(len(row)>23):
+                        # Crear un objeto Contrato relacionado con el estudiante
+                            print('entro If')
+                            contrato = Contrato(
+                                tipo_Contrato=row[21],
+                                fecha_Inicio=row[22],
+                                fecha_Final=row[23],
+                                encargado_Proceso_Seleccion=row[24],
+                                datos_Tutor_O_Jefe_Directivo=row[25],
+                                documentos_Pendientes=row[26],
+                                sector=row[27],
+                            )
+                            contrato.save()
+                        else:
+                            contrato = Contrato(
+                                tipo_Contrato='null',
+                                fecha_Inicio='null',
+                                fecha_Final='null',
+                                encargado_Proceso_Seleccion='null',
+                                datos_Tutor_O_Jefe_Directivo='null',
+                                documentos_Pendientes='null',
+                                sector='null',
+                            )
+                            contrato.save()
+
+                        # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
+                        estado_practica = Estado_Practica(
+                            codigo_estudiante=estudiante,
+                            practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[18],
+                            estado_ubicación=row[19],
+                            comentarios=row[20],
+                            item=aspirantes,
+                            id_contrato=contrato,
+                        )
+                        estado_practica.save()
                     
 
             return render(
-                request, "Archivos/cargaEstudiantesDos.html", {"excel_data": excel_data}
+                request, "Archivos/cargaEstudiantesDos.html", {"excel_data": excel_data, "existe":existe}
             )
         except Exception as error:
             print(error)
