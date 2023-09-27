@@ -48,7 +48,7 @@ def cargarArchivoEstudiantes(request):
                     email_personal=datos[4],
                     telefono=datos[5],
                     nombre=datos[6],
-                    periodo_lectivo=periodo,
+                    periodo_lectivo='2024-1',
                 )
                 est1.save()
                 
