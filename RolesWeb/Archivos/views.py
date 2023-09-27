@@ -5,8 +5,11 @@ from django.shortcuts import render
 from .models import Estudiante, Aspirantes, Contrato, Estado_Practica, Plan_estudios
 
 
+archivo_subido = True
+
 def index(request):
-    return render(request, "Archivos/index.html")
+    existe = Estudiante.objects.exists()
+    return render(request, "Archivos/index.html", {"archivo_subido":archivo_subido, "existe":existe})
 
 
 def cargarArchivoEstudiantes(request):
@@ -49,10 +52,11 @@ def cargarArchivoEstudiantes(request):
                 )
                 est1.save()
                 
-
+            archivo_subido = True
             return render(
-                request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data}
+                request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data, "archivo_subido": archivo_subido}
             )
+            
         except Exception as error:
             print(error)
             return render(

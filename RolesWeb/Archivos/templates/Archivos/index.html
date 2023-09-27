@@ -22,7 +22,11 @@
                 <div class="display-4">Carga Estudiantes</div>
                 <p></p>
                 <a class="btn btn-primary" href="cargaEstudiantes">Subir listado estudiantes</a>
-                <a class="btn btn-primary" href="cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
+                {% if existe %}
+                  <a class="btn btn-primary" id="botonAspirantes" href="cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
+                {% else %}
+                  <a class="btn btn-primary disabled" id="botonAspirantes" href="cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
+                {% endif %}
               </div>
               <div class="col-lg-2"></div>
             </div>
