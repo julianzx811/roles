@@ -48,7 +48,7 @@ def cargarArchivoEstudiantes(request):
                     email_personal=datos[4],
                     telefono=datos[5],
                     nombre=datos[6],
-                    periodo_lectivo='2024-1',
+                    periodo_lectivo='2024 1',
                 )
                 est1.save()
                 
@@ -93,11 +93,9 @@ def cargarArchivoEstudiantesDos(request):
                     )
                     plan_estudios.save()
                     
-                    
                     if (Estudiante.objects.filter(codigo=row[7])):
                         estudiante = Estudiante.objects.filter(codigo=row[7])[0]
                         Estudiante.objects.filter(codigo=row[7]).update(nombre=row[5], apellidos=row[6], cedula=row[8], celular=row[9])
-                    
                     
                         estudiante = Estudiante(
                             programa=row[11],
@@ -109,6 +107,7 @@ def cargarArchivoEstudiantesDos(request):
                             apellidos=row[6],
                             cedula=row[8],
                             celular=row[9],
+                            periodo_lectivo=row[1]
                             # Ajusta esto para el campo plan_estudios
                         )
                         estudiante.save()
@@ -126,32 +125,28 @@ def cargarArchivoEstudiantesDos(request):
                             codigo_estudiante=estudiante,
                         )
                         aspirantes.save()
+                 
+                        if "Aplaza" in row[1]:
+                            periodo_aplazado  = row[1].split("Aplaza ")[1]
+                            estudiante.periodo_lectivo = periodo_aplazado 
+                            print("Peridodo despues de aplaza: "+row[1].split("Aplaza")[1])
+                        elif row[1] == "NO APROBADO":
+                            estudiante.periodo_lectivo = "suspendido"
 
-                        
-                        if(len(row)>23):
+                        estudiante.save()
+
                         # Crear un objeto Contrato relacionado con el estudiante
-                            print('entro If')
-                            contrato = Contrato(
-                                tipo_Contrato=row[21],
-                                fecha_Inicio=row[22],
-                                fecha_Final=row[23],
-                                encargado_Proceso_Seleccion=row[24],
-                                datos_Tutor_O_Jefe_Directivo=row[25],
-                                documentos_Pendientes=row[26],
-                                sector=row[27],
-                            )
-                            contrato.save()
-                        else:
-                            contrato = Contrato(
-                                tipo_Contrato='null',
-                                fecha_Inicio='null',
-                                fecha_Final='null',
-                                encargado_Proceso_Seleccion='null',
-                                datos_Tutor_O_Jefe_Directivo='null',
-                                documentos_Pendientes='null',
-                                sector='null',
-                            )
-                            contrato.save()
+                        print('entro If')
+                        contrato = Contrato(
+                            tipo_Contrato=row[21],
+                            fecha_Inicio=row[22],
+                            fecha_Final=row[23],
+                            encargado_Proceso_Seleccion=row[24],
+                            datos_Tutor_O_Jefe_Directivo=row[25],
+                            documentos_Pendientes=row[26],
+                            sector=row[27],
+                        )
+                        contrato.save()
 
                         # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                         estado_practica = Estado_Practica(
@@ -163,7 +158,6 @@ def cargarArchivoEstudiantesDos(request):
                             id_contrato=contrato,
                         )
                         estado_practica.save()
-                    
 
             return render(
                 request, "Archivos/cargaEstudiantesDos.html", {"excel_data": excel_data, "existe":existe}

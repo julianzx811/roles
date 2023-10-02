@@ -19,6 +19,30 @@ class Estudiante(models.Model):
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
+    def actualizar_periodo(self):
+        # Verificar si el estado de ubicación indica que el estudiante no aprobó o aplazó
+        if self.estadopractica_set.filter(estado_ubicación__in=["NO APROBADO", "APLAZA 2024 1", "Aplaza 2024 1"]):
+            # Obtener el último periodo registrado en la base de datos
+            ultimo_periodo = self.estadopractica_set.latest('id').periodo_practica
+            # Dividir el periodo en año y número de periodo
+            periodo_anio, periodo_numero = ultimo_periodo.split()
+            # Convertir el número de periodo a entero
+            periodo_numero = int(periodo_numero)
+            # Calcular el nuevo periodo
+            if periodo_numero == 1:
+                # Si estaba en el primer periodo, avanzamos al segundo del mismo año
+                nuevo_periodo = f"{periodo_anio} 2"
+            elif periodo_numero == 2:
+                # Si estaba en el segundo periodo, avanzamos al primero del siguiente año
+                nuevo_anio = int(periodo_anio) + 1
+                nuevo_periodo = f"{nuevo_anio} 1"
+            else:
+                # Si no es 1 ni 2, dejamos el periodo sin cambios
+                nuevo_periodo = ultimo_periodo
+
+            # Actualizar el campo periodo_lectivo del estudiante
+            self.periodo_lectivo = nuevo_periodo
+            self.save()
 
 
 class Aspirantes(models.Model):
@@ -46,7 +70,7 @@ class Contrato(models.Model):
 
 
 class Estado_Practica(models.Model):
-    codigo_estudiante = models.CharField(max_length=255, null=True)
+    codigo_estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
     practica_Donde_Labora_EmpresaFliar_Emprendim_Otro = models.CharField(
         max_length=255, null=True
     )
