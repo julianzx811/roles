@@ -15,7 +15,7 @@ class Estudiante(models.Model):
     apellidos = models.CharField(max_length=255, null=True)
     cedula = models.CharField(max_length=255, null=True)
     celular = models.CharField(max_length=255, null=True)
-    periodo_lectivo = models.CharField(max_length=255, default="2024-1", null="2024-1")
+    periodo_lectivo = models.CharField(max_length=255, default="2024 1", null="2024 1")
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
