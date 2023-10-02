@@ -2,14 +2,21 @@ import openpyxl
 import psycopg2
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Estudiante, Aspirantes, Contrato, Estado_Practica, Plan_estudios
 
+from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
+                     Plan_estudios, monitores)
 
 archivo_subido = True
+from .forms import DatosForm
+
 
 def index(request):
     existe = Estudiante.objects.exists()
-    return render(request, "Archivos/index.html", {"archivo_subido":archivo_subido, "existe":existe})
+    return render(
+        request,
+        "Archivos/index.html",
+        {"archivo_subido": archivo_subido, "existe": existe},
+    )
 
 
 def cargarArchivoEstudiantes(request):
@@ -30,38 +37,44 @@ def cargarArchivoEstudiantes(request):
                 for cell in row:
                     if str(cell.value) != "None":
                         row_data.append(str(cell.value))
-                if len(row_data) >= 7:  # Verificar si hay suficientes elementos en la lista
+                if (
+                    len(row_data) >= 7
+                ):  # Verificar si hay suficientes elementos en la lista
                     excel_data.append(row_data)
                 else:
                     print(f"La fila no tiene suficientes elementos: {row_data}")
 
             for datos in excel_data:
-
-                if (Estudiante.objects.filter(codigo=datos[2])):
-                        est1 = Estudiante.objects.filter(codigo=datos[2])[0]
-                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4])
+                if Estudiante.objects.filter(codigo=datos[2]):
+                    est1 = Estudiante.objects.filter(codigo=datos[2])[0]
+                    Estudiante.objects.filter(codigo=datos[2]).update(
+                        email_institucional=datos[3], email_personal=datos[4]
+                    )
                 else:
                     est1 = Estudiante(
-                    codigo=datos[2],
-                    programa=datos[1],
-                    email_institucional=datos[3],
-                    email_personal=datos[4],
-                    telefono=datos[5],
-                    nombre=datos[6],
-                    periodo_lectivo='2024 1',
-                )
+                        codigo=datos[2],
+                        programa=datos[1],
+                        email_institucional=datos[3],
+                        email_personal=datos[4],
+                        telefono=datos[5],
+                        nombre=datos[6],
+                        periodo_lectivo="2024-1",
+                    )
                 est1.save()
-                
+
             archivo_subido = True
             return render(
-                request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data, "archivo_subido": archivo_subido}
+                request,
+                "Archivos/cargaEstudiantes.html",
+                {"excel_data": excel_data, "archivo_subido": archivo_subido},
             )
-            
+
         except Exception as error:
             print(error)
             return render(
                 request, "Archivos/cargaEstudiantes.html", {"error": str(error)}
             )
+
 
 def cargarArchivoEstudiantesDos(request):
     existe = Estudiante.objects.exists()
@@ -71,7 +84,7 @@ def cargarArchivoEstudiantesDos(request):
         try:
             excel_file = request.FILES["excel_file"]
             wb = openpyxl.load_workbook(excel_file)
-            worksheet = wb["ING SISTEMAS 2023 2"] 
+            worksheet = wb["ING SISTEMAS 2023 2"]
 
             excel_data = []
 
@@ -80,23 +93,30 @@ def cargarArchivoEstudiantesDos(request):
                 for cell in row:
                     if str(cell.value) != "None":
                         row_data.append(str(cell.value))
-                if len(row_data) >= 7:  # Verificar si hay suficientes elementos en la lista
+                if (
+                    len(row_data) >= 7
+                ):  # Verificar si hay suficientes elementos en la lista
                     excel_data.append(row_data)
 
             for row in excel_data:
                 # Verifica si la fila tiene suficientes elementos para procesar
-                if len(row) >= 28:  # Ajusta el número según la cantidad de columnas en tu Excel
+                if (
+                    len(row) >= 28
+                ):  # Ajusta el número según la cantidad de columnas en tu Excel
                     # Crear un objeto Estudiante
-                    
-                    plan_estudios = Plan_estudios(
-                        jornada=row[12]
-                    )
+
+                    plan_estudios = Plan_estudios(jornada=row[12])
                     plan_estudios.save()
-                    
-                    if (Estudiante.objects.filter(codigo=row[7])):
+
+                    if Estudiante.objects.filter(codigo=row[7]):
                         estudiante = Estudiante.objects.filter(codigo=row[7])[0]
-                        Estudiante.objects.filter(codigo=row[7]).update(nombre=row[5], apellidos=row[6], cedula=row[8], celular=row[9])
-                    
+                        Estudiante.objects.filter(codigo=row[7]).update(
+                            nombre=row[5],
+                            apellidos=row[6],
+                            cedula=row[8],
+                            celular=row[9],
+                        )
+
                         estudiante = Estudiante(
                             programa=row[11],
                             codigo=row[7],
@@ -107,7 +127,6 @@ def cargarArchivoEstudiantesDos(request):
                             apellidos=row[6],
                             cedula=row[8],
                             celular=row[9],
-                            periodo_lectivo=row[1]
                             # Ajusta esto para el campo plan_estudios
                         )
                         estudiante.save()
@@ -125,28 +144,31 @@ def cargarArchivoEstudiantesDos(request):
                             codigo_estudiante=estudiante,
                         )
                         aspirantes.save()
-                 
-                        if "Aplaza" in row[1]:
-                            periodo_aplazado  = row[1].split("Aplaza ")[1]
-                            estudiante.periodo_lectivo = periodo_aplazado 
-                            print("Peridodo despues de aplaza: "+row[1].split("Aplaza")[1])
-                        elif row[1] == "NO APROBADO":
-                            estudiante.periodo_lectivo = "suspendido"
 
-                        estudiante.save()
-
-                        # Crear un objeto Contrato relacionado con el estudiante
-                        print('entro If')
-                        contrato = Contrato(
-                            tipo_Contrato=row[21],
-                            fecha_Inicio=row[22],
-                            fecha_Final=row[23],
-                            encargado_Proceso_Seleccion=row[24],
-                            datos_Tutor_O_Jefe_Directivo=row[25],
-                            documentos_Pendientes=row[26],
-                            sector=row[27],
-                        )
-                        contrato.save()
+                        if len(row) > 23:
+                            # Crear un objeto Contrato relacionado con el estudiante
+                            print("entro If")
+                            contrato = Contrato(
+                                tipo_Contrato=row[21],
+                                fecha_Inicio=row[22],
+                                fecha_Final=row[23],
+                                encargado_Proceso_Seleccion=row[24],
+                                datos_Tutor_O_Jefe_Directivo=row[25],
+                                documentos_Pendientes=row[26],
+                                sector=row[27],
+                            )
+                            contrato.save()
+                        else:
+                            contrato = Contrato(
+                                tipo_Contrato="null",
+                                fecha_Inicio="null",
+                                fecha_Final="null",
+                                encargado_Proceso_Seleccion="null",
+                                datos_Tutor_O_Jefe_Directivo="null",
+                                documentos_Pendientes="null",
+                                sector="null",
+                            )
+                            contrato.save()
 
                         # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                         estado_practica = Estado_Practica(
@@ -160,10 +182,40 @@ def cargarArchivoEstudiantesDos(request):
                         estado_practica.save()
 
             return render(
-                request, "Archivos/cargaEstudiantesDos.html", {"excel_data": excel_data, "existe":existe}
+                request,
+                "Archivos/cargaEstudiantesDos.html",
+                {"excel_data": excel_data, "existe": existe},
             )
         except Exception as error:
             print(error)
             return render(
                 request, "Archivos/cargaEstudiantesDos.html", {"error": str(error)}
             )
+
+
+def CrearMonitor(request):
+    if request.method == "GET":
+        return render(
+            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
+        )
+    else:
+        form = DatosForm(request.POST)
+        if form.is_valid():
+            Nombre = form.cleaned_data["nombre"]
+
+            Codigo = form.cleaned_data["codigo"]
+            Correo = form.cleaned_data["correo"]
+            Horas = form.cleaned_data["horas"]
+            Programa = form.cleaned_data["programa"]
+            print(Nombre, Codigo)
+            monitor = monitores(
+                nombre=Nombre,
+                codigo=Codigo,
+                correo_institucional=Correo,
+                horas_disponibles=Horas,
+                programa=Programa,
+            )
+            monitor.save()
+        return render(
+            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
+        )

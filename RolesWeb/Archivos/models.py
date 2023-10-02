@@ -79,3 +79,13 @@ class Estado_Practica(models.Model):
     codigo_estudiante = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
     item = models.OneToOneField(Aspirantes, on_delete=models.CASCADE)
     id_contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
+
+
+class monitores(models.Model):
+    nombre = models.CharField(max_length=255, null=False)
+    codigo = models.CharField(max_length=255, null=False)
+    correo_institucional = models.CharField(
+        primary_key=True, max_length=500, null=False
+    )
+    horas_disponibles = models.IntegerField()
+    programa = models.CharField(default="sin programa", max_length=255, null=False)
