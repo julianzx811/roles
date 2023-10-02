@@ -144,6 +144,13 @@ def cargarArchivoEstudiantesDos(request):
                             codigo_estudiante=estudiante,
                         )
                         aspirantes.save()
+                        if "Aplaza" in row[1]:
+                            periodo_aplazado  = row[1].split("Aplaza ")[1]
+                            estudiante.periodo_lectivo = periodo_aplazado 
+                        elif row[1] == "NO APROBADO":
+                            estudiante.periodo_lectivo = "suspendido"
+
+                        estudiante.save()
 
                         if len(row) > 23:
                             # Crear un objeto Contrato relacionado con el estudiante
