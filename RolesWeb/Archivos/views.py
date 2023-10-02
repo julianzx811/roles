@@ -13,10 +13,14 @@ def index(request):
 
 
 def cargarArchivoEstudiantes(request):
+    
+    
     if request.method == "GET":
         return render(request, "Archivos/cargaEstudiantes.html", {})
     else:
         try:
+            actualizados = 0
+            agregados = 0
             excel_file = request.FILES["excel_file"]
             periodo = request.POST.get("file_type")
 
@@ -38,8 +42,10 @@ def cargarArchivoEstudiantes(request):
             for datos in excel_data:
 
                 if (Estudiante.objects.filter(codigo=datos[2])):
-                        est1 = Estudiante.objects.filter(codigo=datos[2])[0]
-                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4])
+                    if ((Estudiante.objects.get(codigo=datos[2]).nombre == datos[6]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_institucional == datos[3]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_personal == datos[4]) == False) or ((Estudiante.objects.get(codigo=datos[2]).telefono == datos[5]) == False):
+                        actualizados += 1
+                        print(actualizados)
+                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4], telefono=datos[5], nombre=datos[6])     
                 else:
                     est1 = Estudiante(
                     codigo=datos[2],
@@ -49,12 +55,14 @@ def cargarArchivoEstudiantes(request):
                     telefono=datos[5],
                     nombre=datos[6],
                     periodo_lectivo='2023-2',
-                )
-                est1.save()
+                    )
+                    agregados += 1
+                    print('agregados',agregados)
+                    est1.save()
                 
-            archivo_subido = True
+                
             return render(
-                request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data, "archivo_subido": archivo_subido}
+                request, "Archivos/cargaEstudiantes.html", {"excel_data": excel_data, "agregados":agregados, "actualizados":actualizados}
             )
             
         except Exception as error:
@@ -65,10 +73,13 @@ def cargarArchivoEstudiantes(request):
 
 def cargarArchivoEstudiantesDos(request):
     existe = Estudiante.objects.exists()
+
     if request.method == "GET":
         return render(request, "Archivos/cargaEstudiantesDos.html", {})
     else:
         try:
+            actualizados = 0
+            agregados = 0
             excel_file = request.FILES["excel_file"]
             wb = openpyxl.load_workbook(excel_file)
             worksheet = wb["ING SISTEMAS 2023 2"] 

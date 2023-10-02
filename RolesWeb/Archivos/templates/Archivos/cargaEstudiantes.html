@@ -85,6 +85,15 @@
                   {% endif %}
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                     El archivo se cargó con éxito
+                    {% if actualizados > 0 %}
+                    <br>
+                      {{actualizados}} estudiante(s) agregado(s)
+                    {% endif %}
+                    {% if agregados > 0 %}
+                      <br>
+                      {{agregados}} estudiante(s) actualizado(s)
+                    
+                    {% endif %}
                   </div>
                 {% elif error %}
                 <div class="alert_fracaso">
