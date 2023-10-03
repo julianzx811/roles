@@ -85,6 +85,10 @@
                 <div class="alert_exito">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                     El archivo se cargó con éxito
+                    {% if actualizados > 0 %}
+                    <br>
+                      {{actualizados}} estudiante(s) actualizado(s)
+                    {% endif %}
                   </div>
                 {% elif error %}
                 <div class="alert_fracaso">

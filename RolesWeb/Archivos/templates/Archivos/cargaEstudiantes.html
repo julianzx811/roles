@@ -79,12 +79,21 @@
                   {% if excel_data %}
                     <script>
                       setTimeout(function() {
-                          window.location.href = "/CargaEstudiantesDos/"; // Replace with your actual URL
+                          window.location.href = "/cargaEstudiantesDos/"; // Replace with your actual URL
                       }, 2000);
                     </script>
                   {% endif %}
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                     El archivo se cargó con éxito
+                    {% if actualizados > 0 %}
+                    <br>
+                      {{actualizados}} estudiante(s) actualizado(s)
+                    {% endif %}
+                    {% if agregados > 0 %}
+                      <br>
+                      {{agregados}} estudiante(s) agregado(s)
+                    
+                    {% endif %}
                   </div>
                 {% elif error %}
                 <div class="alert_fracaso">
