@@ -196,6 +196,12 @@ def cargarArchivoEstudiantesDos(request):
                 request, "Archivos/CargaEstudiantesDos.html", {"error": str(error)}
             )
 
+def MostrarEstudiantes(request):
+    estudiantes = Estudiante.objects.filter()
+    return render(
+            request, "Archivos/verEstudiantes.html", {"estudiantes": estudiantes}
+    )
+
 
 def CrearMonitor(request):
     if request.method == "GET":

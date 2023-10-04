@@ -15,4 +15,9 @@ urlpatterns = [
         views.CrearMonitor,
         name="CrearMonitor",
     ),
+    path(
+        "MostrarEstudiantes/",
+        views.MostrarEstudiantes,
+        name="MostrarEstudiantes",
+    ),
 ]
