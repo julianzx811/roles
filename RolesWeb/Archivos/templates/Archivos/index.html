@@ -11,13 +11,13 @@
             background-color: #283747;
             color: white;
             margin: 0;
-            height: 100vh; /* Establece la altura del cuerpo al 100% de la ventana */
+            height: 100vh; 
             display: flex;
-            justify-content: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
+            justify-content: center; 
+            align-items: center; 
         }
 
-        /* Agrega las clases de estilo a tus botones */
+       
         .btn-custom {
             position: relative;
             padding: 1em 1.5em;
@@ -26,7 +26,7 @@
             cursor: pointer;
             outline: none;
             font-size: 18px;
-            margin: 0.5em; /* Espacio entre los botones */
+            margin: 0.5em; 
             color: #566473;
         }
 
@@ -72,7 +72,7 @@
         <!-- <div class="display-6">Inicio</div> -->
         <div class="display-4">Gestión de Estudiantes</div>
         <p></p>
-        <!-- Agrega las clases personalizadas a tus botones y un contenedor div -->
+        
         <div class="d-flex justify-content-center">
             <a class="btn btn-custom type1" href="cargaEstudiantes">Subir listado estudiantes</a>
             {% if existe %}
@@ -81,7 +81,7 @@
                 <a class="btn btn-primary disabled" id="botonAspirantes" href="cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
             {% endif %}
             <a class="btn btn-custom type1" href="CrearMonitor">Crear Monitor</a>
-            <a class="btn btn-custom type1" href="MostrarEstudiantes">Mostrar Estudiantes</a> <!-- Nuevo botón -->
+            <a class="btn btn-custom type1" href="MostrarEstudiantes">Mostrar Estudiantes</a> 
         </div>
     </div>
 </body>
