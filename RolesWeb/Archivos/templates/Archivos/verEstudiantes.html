@@ -16,12 +16,16 @@
                 <a class="btn btn-dark" href="/"><i class="bi bi-arrow-90deg-left"></i>Volver</a>
               </div>
               <div class="col-lg-9" style="float: left; align-items: end; text-align: left;">
+                {% if estudiantes|length > 0 %}
                   {% for estudiante in estudiantes %}
                     <h6>{{estudiante.nombre}}</a>
                     <button class="btn btn-success" id="codigo_unico" value="{{estudiante.codigo}}" data-bs-toggle="modal" data-bs-target="#modal{{estudiante.codigo}}">Ver Estudiante</button>
                     <button class="btn btn-danger" disabled>Inhabilitar</button>
                   </p>
                   {% endfor %}
+                {% else %}
+                  <p>No hay estudiantes agregados</p>
+                {% endif %}
               </div>
               <div class="col-lg-1"></div>
             </div>
