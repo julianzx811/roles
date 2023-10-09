@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Creacion de programa</title>
+    <title>editando programa</title>
 </head>
 <body>
     <h1>Simple Form</h1>
@@ -9,10 +9,10 @@
         {% csrf_token %} <!-- Include the CSRF token for security -->
 
         <label for="codigo">Código:</label>
-        <input type="text" id="codigo" name="codigo" required><br><br>
+        <input type="text" id="codigo" name="codigo" value={{programa.codigo}} required><br><br>
 
         <label for="programa">Programa:</label>
-        <input type="text" id="programa" name="programa" required><br><br>
+        <input type="text" id="programa" name="programa" value={{programa.programa}} required><br><br>
 
         <label for="facultad">Facultad:</label>
         <select id="facultad" name="facultad" required>
@@ -25,7 +25,7 @@
             <option value="Derecho y ciencias políticas">Derecho y ciencias políticas</option>
         </select><br><br>
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="actualizar programa">
     </form>
 </body>
 </html>

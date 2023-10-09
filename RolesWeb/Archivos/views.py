@@ -1,4 +1,5 @@
 import openpyxl
+from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -336,7 +337,29 @@ def CrudPrograma(request):
 
 
 def UpdatePrograma(request, programa_id):
-    return render(request, "Archivos/UpdatePrograma.html")
+    if request.method == "GET":
+        programa = Programa.objects.get(pk=programa_id)
+        programaobj = model_to_dict(programa)
+        return render(
+            request, "Archivos/UpdatePrograma.html", {"programa": programaobj}
+        )
+    elif request.method == "POST":
+        print("entro1")
+        form = ProgramForm(request.POST)
+        if form.is_valid():
+            try:
+                print("entro2")
+                codigo = form.cleaned_data["codigo"]
+                programa = form.cleaned_data["programa"]
+                facultad = request.POST.get("facultad")
+                programita = Programa(
+                    codigo=codigo, programa=programa, facultad=facultad
+                )
+                print(programita)
+                programita.save()
+            except Exception as error:
+                print(error)
+                return UpdatePrograma(request, programa_id)
 
 
 def CreatePrograma(request):
