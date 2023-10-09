@@ -1,60 +1,101 @@
 import openpyxl
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from .forms import DatosForm, ProgramForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Plan_estudios, Programa, monitores)
+                     Perfiles, Plan_estudios, Programa, monitores)
 
 archivo_subido = True
 
 
-def CrearMonitor(request):
-    programas = Programa.objects.all()
+def login(request):
     if request.method == "GET":
-        return render(request, "Archivos/CrearMonitor.html", {"programas": programas})
+        return render(request, "Archivos/login.html")
+    if request.method == "POST":
+        login_fallo = False
+        usuario_existe = False
+        codigo = request.POST["codigo"]
+        contrasena = request.POST["contrasena"]
+        cargo = request.POST.get("cargoUsuario")
+        if Perfiles.objects.filter(codigo=codigo).exists():
+            if (
+                (Perfiles.objects.get(codigo=codigo).codigo == codigo)
+                and (Perfiles.objects.get(codigo=codigo).contrasena == contrasena)
+                and (Perfiles.objects.get(codigo=codigo).cargo == cargo)
+            ):
+                print("Login exitoso")
+                if cargo == "Estudiante":
+                    return redirect("/vistaEstudiante")
+                elif cargo == "Docente Monitor":
+                    return redirect(
+                        "/vistaDocenteMonitor",
+                    )
+                elif cargo == "Coordinador":
+                    return redirect("/vistaCoordinador")
+            else:
+                login_fallo = True
+                return render(
+                    request,
+                    "Archivos/login.html",
+                    {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
+                )
+        else:
+            usuario_existe = True
+            return render(
+                request,
+                "Archivos/login.html",
+                {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
+            )
+
+
+def CrearMonitor(request):
+    if request.method == "GET":
+        return render(
+            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
+        )
     else:
+        creaMonitor = False
+        monitorExiste = False
         form = DatosForm(request.POST)
         if form.is_valid():
-            try:
+            if (
+                Perfiles.objects.filter(codigo=form.cleaned_data["codigo"]).exists()
+                == False
+            ):
                 Nombre = form.cleaned_data["nombre"]
-
                 Codigo = form.cleaned_data["codigo"]
                 Correo = form.cleaned_data["correo"]
                 Horas = form.cleaned_data["horas"]
-                programaxd = request.POST.get("programa")
+                Programa = form.cleaned_data["programa"]
                 monitor = monitores(
                     nombre=Nombre,
                     codigo=Codigo,
                     correo_institucional=Correo,
                     horas_disponibles=Horas,
-                    programa_id=programaxd,
+                    programa=Programa,
                 )
-                print(monitor)
                 monitor.save()
-                return render(
-                    request,
-                    "Archivos/CrearMonitor.html",
-                    {
-                        "programas": programas,
-                        "hecho": "se registro el monitor correctamente",
-                    },
+                perfil = Perfiles(
+                    codigo=Codigo,
+                    contrasena=Codigo,
+                    nombre=Nombre,
+                    cargo="Docente Monitor",
                 )
-            except Exception as error:
-                print(error)
-                return render(
-                    request,
-                    "Archivos/CrearMonitor.html",
-                    {"error": error, "programas": programas},
-                )
-        else:
-            print(form.errors)
-            return render(
-                request,
-                "Archivos/CrearMonitor.html",
-                {"error": form.errors, "programas": programas},
-            )
+                perfil.save()
+                creaMonitor = True
+            else:
+                monitorExiste = True
+        return render(
+            request,
+            "Archivos/CrearMonitor.html",
+            {
+                "archivo_subido": archivo_subido,
+                "creaMonitor": creaMonitor,
+                "monitorExiste": monitorExiste,
+            },
+        )
 
 
 def crearPrograma(request):
@@ -62,10 +103,34 @@ def crearPrograma(request):
 
 
 def index(request):
+    if request.method == "GET":
+        return render(request, "Archivos/index.html")
+
+
+def indexCoordinador(request):
+    existe = Estudiante.objects.exists()
+    return render(
+        request,
+        "Archivos/vistaCoordinador.html",
+        {"archivo_subido": archivo_subido, "existe": existe},
+    )
+
+
+def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
     return render(
         request,
         "Archivos/index.html",
+        "Archivos/vistaDocenteMonitor.html",
+        {"archivo_subido": archivo_subido, "existe": existe},
+    )
+
+
+def indexEstudiante(request):
+    existe = Estudiante.objects.exists()
+    return render(
+        request,
+        "Archivos/vistaEstudiante.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
@@ -149,6 +214,13 @@ def cargarArchivoEstudiantes(request):
                     agregados += 1
                     print("agregados", agregados)
                     est1.save()
+                    perfil = Perfiles(
+                        codigo=datos[2],
+                        contrasena=datos[2],
+                        nombre=datos[6],
+                        cargo="Estudiante",
+                    )
+                    perfil.save()
             return render(
                 request,
                 "Archivos/cargaEstudiantes.html",

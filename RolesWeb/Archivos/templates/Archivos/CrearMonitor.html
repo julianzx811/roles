@@ -105,7 +105,7 @@
     </style>
 </head>
 <body>
-    <a class="btn btn-custom type2" href="/">Volver</a>
+    <a class="btn btn-custom type2" href="/vistaCoordinador">Volver</a>
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -120,7 +120,7 @@
 
                         <div class="mb-3">
                             <label for="codigo">Código:</label>
-                            <input type="text" id="codigo" name="codigo" required>
+                            <input type="text" id="codigo" name="codigo" required maxlength="11">
                         </div>
 
                         <div class="mb-3">
@@ -132,22 +132,22 @@
                             <label for="horas">Horas Disponibles:</label>
                             <input type="number" id="horas" name="horas" required min="0">
                         </div>
-                        <select for="programa" id="playerselect" name="programa" class="player-dropdown" required>
-                            {% for CurrentPrograma in programas %}
-                                <option value="{{ CurrentPrograma.id}}">{{ CurrentPrograma.programa }}</option>
-                            {% endfor %}
-                        </select>
-                        {%  if hecho %}
-                        <h1>{{hecho}}</h1>
-                        {% endif%}
-                        {%  if error %}
-                        <h1>ocurrio un error</h1>
-                        {% endif%}
+
+                        <div class="mb-3">
+                            <label for="programa">Programa:</label>
+                            <input type="text" id="programa" name="programa" required>
+                        </div>
 
                         <div class="mb-3 text-center">
                             <input type="submit" value="Enviar">
                         </div>
                     </form>
+                    {% if creaMonitor %}
+                        <p>Monitor creado exitosamente</p>
+                    {% endif %}
+                    {% if monitorExiste %}
+                        <p>El monitor ya existe en el sistema</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
