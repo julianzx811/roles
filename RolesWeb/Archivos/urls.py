@@ -14,7 +14,7 @@ urlpatterns = [
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
     # CRUD operations for programs
-    path("CrudProgramas/", views.CrudPrograma, name="CrudProgramas"),
+    path("vistaCoordinador/CrudProgramas/", views.CrudPrograma, name="CrudProgramas"),
     path("CreatePrograma/", views.CreatePrograma, name="CreatePrograma"),
     path(
         "UpdatePrograma/<int:programa_id>/", views.UpdatePrograma, name="UpdatePrograma"

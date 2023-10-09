@@ -19,6 +19,7 @@ def login(request):
         codigo = request.POST["codigo"]
         contrasena = request.POST["contrasena"]
         cargo = request.POST.get("cargoUsuario")
+        print(codigo, contrasena, cargo)
         if Perfiles.objects.filter(codigo=codigo).exists():
             if (
                 (Perfiles.objects.get(codigo=codigo).codigo == codigo)
