@@ -2,11 +2,62 @@ import openpyxl
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import DatosForm
+from .forms import DatosForm, ProgramForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Plan_estudios, monitores)
+                     Plan_estudios, Programa, monitores)
 
 archivo_subido = True
+
+
+def CrearMonitor(request):
+    programas = Programa.objects.all()
+    if request.method == "GET":
+        return render(request, "Archivos/CrearMonitor.html", {"programas": programas})
+    else:
+        form = DatosForm(request.POST)
+        if form.is_valid():
+            try:
+                Nombre = form.cleaned_data["nombre"]
+
+                Codigo = form.cleaned_data["codigo"]
+                Correo = form.cleaned_data["correo"]
+                Horas = form.cleaned_data["horas"]
+                programaxd = request.POST.get("programa")
+                monitor = monitores(
+                    nombre=Nombre,
+                    codigo=Codigo,
+                    correo_institucional=Correo,
+                    horas_disponibles=Horas,
+                    programa_id=programaxd,
+                )
+                print(monitor)
+                monitor.save()
+                return render(
+                    request,
+                    "Archivos/CrearMonitor.html",
+                    {
+                        "programas": programas,
+                        "hecho": "se registro el monitor correctamente",
+                    },
+                )
+            except Exception as error:
+                print(error)
+                return render(
+                    request,
+                    "Archivos/CrearMonitor.html",
+                    {"error": error, "programas": programas},
+                )
+        else:
+            print(form.errors)
+            return render(
+                request,
+                "Archivos/CrearMonitor.html",
+                {"error": form.errors, "programas": programas},
+            )
+
+
+def crearPrograma(request):
+    return render(request, "Archivos/CrudPrograma.html")
 
 
 def index(request):
@@ -46,28 +97,65 @@ def cargarArchivoEstudiantes(request):
                     print(f"La fila no tiene suficientes elementos: {row_data}")
 
             for datos in excel_data:
-                if (Estudiante.objects.filter(codigo=datos[2])):
-                    if ((Estudiante.objects.get(codigo=datos[2]).nombre == datos[6]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_institucional == datos[3]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_personal == datos[4]) == False) or ((Estudiante.objects.get(codigo=datos[2]).telefono == datos[5]) == False):
+                if Estudiante.objects.filter(codigo=datos[2]):
+                    if (
+                        (
+                            (Estudiante.objects.get(codigo=datos[2]).nombre == datos[6])
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(
+                                    codigo=datos[2]
+                                ).email_institucional
+                                == datos[3]
+                            )
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(codigo=datos[2]).email_personal
+                                == datos[4]
+                            )
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(codigo=datos[2]).telefono
+                                == datos[5]
+                            )
+                            == False
+                        )
+                    ):
                         actualizados += 1
                         print(actualizados)
-                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4], telefono=datos[5], nombre=datos[6])     
+                        Estudiante.objects.filter(codigo=datos[2]).update(
+                            email_institucional=datos[3],
+                            email_personal=datos[4],
+                            telefono=datos[5],
+                            nombre=datos[6],
+                        )
                 else:
                     est1 = Estudiante(
-                    codigo=datos[2],
-                    programa=datos[1],
-                    email_institucional=datos[3],
-                    email_personal=datos[4],
-                    telefono=datos[5],
-                    nombre=datos[6],
-                    periodo_lectivo='2023-2',
+                        codigo=datos[2],
+                        programa=datos[1],
+                        email_institucional=datos[3],
+                        email_personal=datos[4],
+                        telefono=datos[5],
+                        nombre=datos[6],
+                        periodo_lectivo="2023-2",
                     )
                     agregados += 1
-                    print('agregados',agregados)
+                    print("agregados", agregados)
                     est1.save()
             return render(
                 request,
                 "Archivos/cargaEstudiantes.html",
-                {"excel_data": excel_data, "agregados":agregados, "actualizados":actualizados},
+                {
+                    "excel_data": excel_data,
+                    "agregados": agregados,
+                    "actualizados": actualizados,
+                },
             )
 
         except Exception as error:
@@ -188,7 +276,11 @@ def cargarArchivoEstudiantesDos(request):
             return render(
                 request,
                 "Archivos/CargaEstudiantesDos.html",
-                {"excel_data": excel_data, "existe": existe, "actualizados":actualizados},
+                {
+                    "excel_data": excel_data,
+                    "existe": existe,
+                    "actualizados": actualizados,
+                },
             )
         except Exception as error:
             print(error)
@@ -196,36 +288,66 @@ def cargarArchivoEstudiantesDos(request):
                 request, "Archivos/CargaEstudiantesDos.html", {"error": str(error)}
             )
 
+
 def MostrarEstudiantes(request):
     estudiantes = Estudiante.objects.filter()
-    return render(
-            request, "Archivos/verEstudiantes.html", {"estudiantes": estudiantes}
-    )
+    return render(request, "Archivos/verEstudiantes.html", {"estudiantes": estudiantes})
 
 
-def CrearMonitor(request):
+def CrudPrograma(request):
+    programas = Programa.objects.all()
+    if request.method == "DELETE":
+        return render(request, "Archivos/CrudPrograma.html", {"programas": programas})
     if request.method == "GET":
-        return render(
-            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
-        )
-    else:
-        form = DatosForm(request.POST)
+        return render(request, "Archivos/CrudPrograma.html", {"programas": programas})
+    if request.method == "POST":
+        form = ProgramForm(request.POST)
         if form.is_valid():
-            Nombre = form.cleaned_data["nombre"]
-
-            Codigo = form.cleaned_data["codigo"]
-            Correo = form.cleaned_data["correo"]
-            Horas = form.cleaned_data["horas"]
-            Programa = form.cleaned_data["programa"]
-            print(Nombre, Codigo)
-            monitor = monitores(
-                nombre=Nombre,
-                codigo=Codigo,
-                correo_institucional=Correo,
-                horas_disponibles=Horas,
-                programa=Programa,
+            try:
+                codigo = form.cleaned_data["codigo"]
+                programa = form.cleaned_data["programa"]
+                facultad = request.POST.get("facultad")
+                programita = Programa(
+                    codigo=codigo, programa=programa, facultad=facultad
+                )
+                programita.save()
+                return render(
+                    request,
+                    "Archivos/CrudPrograma.html",
+                    {
+                        "programas": programas,
+                        "hecho": "se registro el monitor correctamente",
+                    },
+                )
+            except Exception as error:
+                print(error)
+                return render(
+                    request,
+                    "Archivos/CrudPrograma.html",
+                    {"error": error, "programas": programas},
+                )
+        else:
+            print(form.errors)
+            return render(
+                request,
+                "Archivos/CrearMonitor.html",
+                {"error": form.errors, "programas": programas},
             )
-            monitor.save()
-        return render(
-            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
-        )
+
+
+def UpdatePrograma(request, programa_id):
+    return render(request, "Archivos/UpdatePrograma.html")
+
+
+def CreatePrograma(request):
+    return render(request, "Archivos/CreatePrograma.html")
+
+
+def DeletePrograma(request, programa_id):
+    programa = Programa.objects.get(pk=programa_id)
+    try:
+        programa.delete()
+        return CrudPrograma(request)
+    except Exception as error:
+        print(error)
+        return CrudPrograma(request)

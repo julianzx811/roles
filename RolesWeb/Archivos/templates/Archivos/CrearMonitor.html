@@ -132,11 +132,17 @@
                             <label for="horas">Horas Disponibles:</label>
                             <input type="number" id="horas" name="horas" required min="0">
                         </div>
-
-                        <div class="mb-3">
-                            <label for="programa">Programa:</label>
-                            <input type="text" id="programa" name="programa" required>
-                        </div>
+                        <select for="programa" id="playerselect" name="programa" class="player-dropdown" required>
+                            {% for CurrentPrograma in programas %}
+                                <option value="{{ CurrentPrograma.id}}">{{ CurrentPrograma.programa }}</option>
+                            {% endfor %}
+                        </select>
+                        {%  if hecho %}
+                        <h1>{{hecho}}</h1>
+                        {% endif%}
+                        {%  if error %}
+                        <h1>ocurrio un error</h1>
+                        {% endif%}
 
                         <div class="mb-3 text-center">
                             <input type="submit" value="Enviar">

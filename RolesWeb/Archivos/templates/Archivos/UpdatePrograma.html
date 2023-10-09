@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Creacion de programa</title>
+</head>
+<body>
+    <h1>Simple Form</h1>
+    <form action="{% url 'CrudProgramas' %}" method="post">
+        {% csrf_token %} <!-- Include the CSRF token for security -->
+
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" required><br><br>
+
+        <label for="programa">Programa:</label>
+        <input type="text" id="programa" name="programa" required><br><br>
+
+        <label for="facultad">Facultad:</label>
+        <select id="facultad" name="facultad" required>
+            <option value="Ingeniería">Ingeniería</option>
+            <option value="Ciencias económicas">Ciencias económicas</option>
+            <option value="Ciencias culinarias">Ciencias culinarias</option>
+            <option value="Ciencias humanas y sociales">Ciencias humanas y sociales</option>
+            <option value="Arquitectura de arte y diseño">Arquitectura de arte y diseño</option>
+            <option value="Escuela de deporte">Escuela de deporte</option>
+            <option value="Derecho y ciencias políticas">Derecho y ciencias políticas</option>
+        </select><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
