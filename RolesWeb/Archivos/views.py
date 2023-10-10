@@ -405,7 +405,7 @@ def CrudPrograma(request):
             return render(
                 request,
                 "Archivos/CrearMonitor.html",
-                {"error": form.errors, "programas": programas},
+                {"error": "algo salio mal", "programas": programas},
             )
 
 
@@ -414,7 +414,9 @@ def UpdatePrograma(request, programa_id):
         programa = Programa.objects.get(pk=programa_id)
         programaobj = model_to_dict(programa)
         return render(
-            request, "Archivos/UpdatePrograma.html", {"programa": programaobj}
+            request,
+            "Archivos/UpdatePrograma.html",
+            {"programa": programaobj, "id": programa_id},
         )
     elif request.method == "POST":
         print("entro1")
@@ -425,14 +427,14 @@ def UpdatePrograma(request, programa_id):
                 codigo = form.cleaned_data["codigo"]
                 programa = form.cleaned_data["programa"]
                 facultad = request.POST.get("facultad")
-                programita = Programa(
+                Programa.objects.filter(id=programa_id).update(
                     codigo=codigo, programa=programa, facultad=facultad
                 )
-                print(programita)
-                programita.save()
+                request.method = "GET"
+                return CrudPrograma(request)
             except Exception as error:
                 print(error)
-                return UpdatePrograma(request, programa_id)
+                return CrudPrograma(request)
 
 
 def CreatePrograma(request):
