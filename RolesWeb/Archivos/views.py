@@ -1,13 +1,12 @@
 import openpyxl
-import psycopg2
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from .forms import DatosForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
                      Plan_estudios, monitores)
 
 archivo_subido = True
-from .forms import DatosForm
 
 
 def index(request):
@@ -58,7 +57,7 @@ def cargarArchivoEstudiantes(request):
                         email_personal=datos[4],
                         telefono=datos[5],
                         nombre=datos[6],
-                        periodo_lectivo="2024-1",
+                        periodo_lectivo="2024 1",
                     )
                 est1.save()
 
@@ -72,14 +71,14 @@ def cargarArchivoEstudiantes(request):
         except Exception as error:
             print(error)
             return render(
-                request, "Archivos/cargaEstudiantes.html", {"error": str(error)}
+                request, "Archivos/CargaEstudiantes.html", {"error": str(error)}
             )
 
 
 def cargarArchivoEstudiantesDos(request):
     existe = Estudiante.objects.exists()
     if request.method == "GET":
-        return render(request, "Archivos/cargaEstudiantesDos.html", {})
+        return render(request, "Archivos/CargaEstudiantesDos.html", {})
     else:
         try:
             excel_file = request.FILES["excel_file"]
@@ -127,6 +126,7 @@ def cargarArchivoEstudiantesDos(request):
                             apellidos=row[6],
                             cedula=row[8],
                             celular=row[9],
+                            periodo_lectivo=row[1]
                             # Ajusta esto para el campo plan_estudios
                         )
                         estudiante.save()
@@ -152,30 +152,30 @@ def cargarArchivoEstudiantesDos(request):
 
                         estudiante.save()
 
-                        if len(row) > 23:
-                            # Crear un objeto Contrato relacionado con el estudiante
-                            print("entro If")
-                            contrato = Contrato(
-                                tipo_Contrato=row[21],
-                                fecha_Inicio=row[22],
-                                fecha_Final=row[23],
-                                encargado_Proceso_Seleccion=row[24],
-                                datos_Tutor_O_Jefe_Directivo=row[25],
-                                documentos_Pendientes=row[26],
-                                sector=row[27],
+                        if "Aplaza" in row[1]:
+                            periodo_aplazado = row[1].split("Aplaza ")[1]
+                            estudiante.periodo_lectivo = periodo_aplazado
+                            print(
+                                "Peridodo despues de aplaza: "
+                                + row[1].split("Aplaza")[1]
                             )
-                            contrato.save()
-                        else:
-                            contrato = Contrato(
-                                tipo_Contrato="null",
-                                fecha_Inicio="null",
-                                fecha_Final="null",
-                                encargado_Proceso_Seleccion="null",
-                                datos_Tutor_O_Jefe_Directivo="null",
-                                documentos_Pendientes="null",
-                                sector="null",
-                            )
-                            contrato.save()
+                        elif row[1] == "NO APROBADO":
+                            estudiante.periodo_lectivo = "suspendido"
+
+                        estudiante.save()
+
+                        # Crear un objeto Contrato relacionado con el estudiante
+                        print("entro If")
+                        contrato = Contrato(
+                            tipo_Contrato=row[21],
+                            fecha_Inicio=row[22],
+                            fecha_Final=row[23],
+                            encargado_Proceso_Seleccion=row[24],
+                            datos_Tutor_O_Jefe_Directivo=row[25],
+                            documentos_Pendientes=row[26],
+                            sector=row[27],
+                        )
+                        contrato.save()
 
                         # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                         estado_practica = Estado_Practica(
@@ -190,13 +190,13 @@ def cargarArchivoEstudiantesDos(request):
 
             return render(
                 request,
-                "Archivos/cargaEstudiantesDos.html",
+                "Archivos/CargaEstudiantesDos.html",
                 {"excel_data": excel_data, "existe": existe},
             )
         except Exception as error:
             print(error)
             return render(
-                request, "Archivos/cargaEstudiantesDos.html", {"error": str(error)}
+                request, "Archivos/CargaEstudiantesDos.html", {"error": str(error)}
             )
 
 
