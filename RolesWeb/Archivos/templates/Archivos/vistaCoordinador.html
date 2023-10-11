@@ -70,12 +70,18 @@
 <body>
     <div class="container text-center">
         <!-- <div class="display-6">Inicio</div> -->
-        <div class="display-4">Inicio</div>
+        <div class="display-4">Coordinador</div>
         <p></p>
         
         <div class="d-flex justify-content-center">
-            <a class="btn btn-custom type1" href="login">Iniciar Sesión</a>
-            
+            <a class="btn btn-custom type1" href="/cargaEstudiantes">Subir listado estudiantes</a>
+            {% if existe %}
+                <a class="btn btn-custom type1" id="botonAspirantes" href="/cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
+            {% else %}
+                <a class="btn btn-custom type1 disabled" id="botonAspirantes" href="/cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
+            {% endif %}
+            <a class="btn btn-custom type1" href="/CrearMonitor">Crear Monitor</a>
+            <a class="btn btn-custom type1" href="/MostrarEstudiantes">Mostrar Estudiantes</a> 
         </div>
     </div>
 </body>

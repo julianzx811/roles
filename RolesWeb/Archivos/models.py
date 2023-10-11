@@ -89,3 +89,9 @@ class monitores(models.Model):
     )
     horas_disponibles = models.IntegerField()
     programa = models.CharField(default="sin programa", max_length=255, null=False)
+
+class Perfiles(models.Model):
+    contrasena =  models.CharField(max_length=255,null=False)
+    codigo = models.CharField(max_length=255,null=False, default='1')
+    nombre = models.CharField(max_length=255,null=False)
+    cargo = models.CharField(max_length=255,null=False)

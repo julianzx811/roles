@@ -1,37 +1,46 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Datos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #283747;
+            color: white;
             margin: 0;
             padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #333;
-        }
-
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #fff;
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.5);
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .btn-custom.type2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 1em;
+            z-index: 1000;
+            color: white;
+        }
+
+        .btn-custom.type2:hover {
+            color: black;
         }
 
         label {
-            display: block;
-            margin-bottom: 10px;
-            color: #555;
+            color: white;
         }
 
         input[type="text"],
@@ -39,45 +48,110 @@
         input[type="number"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            border: 1px solid white;
             border-radius: 3px;
+            color: black;
+            background-color: white;
         }
 
         input[type="submit"] {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px 20px;
+            background-color: transparent;
             border: none;
-            border-radius: 3px;
             cursor: pointer;
+            position: relative;
+            padding: 1em 1.5em;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            outline: none;
+            font-size: 18px;
+            color: white;
+            overflow: hidden;
+        }
+
+        input[type="submit"]:before,
+        input[type="submit"]:after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: green;
+            transition: all 0.6s ease;
+            border-radius: 2px;
+        }
+
+        input[type="submit"]:after {
+            bottom: 0;
+            right: 0;
+            transform-origin: bottom right;
+        }
+
+        input[type="submit"]:before {
+            top: 0;
+            left: 0;
+            transform-origin: top left;
+        }
+
+        input[type="submit"]:hover:after,
+        input[type="submit"]:hover:before {
+            width: 100%;
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            color: green;
         }
     </style>
 </head>
 <body>
-    <h1>Formulario de Datos</h1>
-    <form action="{% url 'CrearMonitor' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
+    <a class="btn btn-custom type2" href="/vistaCoordinador">Volver</a>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <form action="{% url 'CrearMonitor' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h1 class="text-center">Registro Docente Monitor</h1>
+                        <div class="mb-3">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" required>
+                        </div>
 
-        <label for="codigo">Código:</label>
-        <input type="text" id="codigo" name="codigo" required>
+                        <div class="mb-3">
+                            <label for="codigo">Código:</label>
+                            <input type="text" id="codigo" name="codigo" required maxlength="11">
+                        </div>
 
-        <label for="correo">Correo Institucional:</label>
-        <input type="email" id="correo" name="correo" required>
+                        <div class="mb-3">
+                            <label for="correo">Correo Institucional:</label>
+                            <input type="email" id="correo" name="correo" required>
+                        </div>
 
-        <label for="horas">Horas Disponibles:</label>
-        <input type="number" id="horas" name="horas" required>
+                        <div class="mb-3">
+                            <label for="horas">Horas Disponibles:</label>
+                            <input type="number" id="horas" name="horas" required min="0">
+                        </div>
 
-        <label for="programa">Programa:</label>
-        <input type="text" id="programa" name="programa" required>
+                        <div class="mb-3">
+                            <label for="programa">Programa:</label>
+                            <input type="text" id="programa" name="programa" required>
+                        </div>
 
-        <input type="submit" value="Enviar">
-    </form>
+                        <div class="mb-3 text-center">
+                            <input type="submit" value="Enviar">
+                        </div>
+                    </form>
+                    {% if creaMonitor %}
+                        <p>Monitor creado exitosamente</p>
+                    {% endif %}
+                    {% if monitorExiste %}
+                        <p>El monitor ya existe en el sistema</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

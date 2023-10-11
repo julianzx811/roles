@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Programas List</title>
+    <style>
+        /* CSS for the modal */
+ .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff; /* Button background color */
+        color: #fff; /* Button text color */
+        text-decoration: none; /* Remove underline from the link */
+        border: none; /* Remove border */
+        cursor: pointer;
+    }
+    /* Additional styles for when hovering over the button */
+    .button:hover {
+        background-color: #0056b3; /* Hover background color */
+    }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a class="button" href="{% url 'CreatePrograma' %}">Crear Programa</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Programa</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        {% if funciono %}
+        <h1>{{funciono}}</h1>
+        {% endif %}
+        {% if error %}
+        <h1>{{error}}</h1>
+        {% endif %}
+
+        <tbody>
+            {% for CurrentPrograma in programas %}
+                <tr>
+                    <td>{{ CurrentPrograma.programa }}</td>
+                    <td>
+                        <a class="button" href="{% url 'UpdatePrograma' CurrentPrograma.id %}">Edit</a>
+                        <a class="button" href="{% url 'DeletePrograma'  CurrentPrograma.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</body>
+</html>

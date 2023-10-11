@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>editando programa</title>
+</head>
+<body>
+    <h1>Simple Form</h1>
+    <form action="{% url 'UpdatePrograma' id %}" method="post">
+        {% csrf_token %} <!-- Include the CSRF token for security -->
+
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" value={{programa.codigo}} required><br><br>
+
+        <label for="programa">Programa:</label>
+        <input type="text" id="programa" name="programa" value={{programa.programa}} required><br><br>
+
+        <label for="facultad">Facultad:</label>
+            <select id="facultad" name="facultad" required>
+                <option value="Ingeniería" {% if programa.facultad == "Ingeniería" %}selected{% endif %}>Ingeniería</option>
+                <option value="Ciencias económicas" {% if programa.facultad == "Ciencias económicas" %}selected{% endif %}>Ciencias económicas</option>
+                <option value="Ciencias culinarias" {% if programa.facultad == "Ciencias culinarias" %}selected{% endif %}>Ciencias culinarias</option>
+                <option value="Ciencias humanas y sociales" {% if programa.facultad == "Ciencias humanas y sociales" %}selected{% endif %}>Ciencias humanas y sociales</option>
+                <option value="Arquitectura de arte y diseño" {% if programa.facultad == "Arquitectura de arte y diseño" %}selected{% endif %}>Arquitectura de arte y diseño</option>
+                <option value="Escuela de deporte" {% if programa.facultad == "Escuela de deporte" %}selected{% endif %}>Escuela de deporte</option>
+                <option value="Derecho y ciencias políticas" {% if programa.facultad == "Derecho y ciencias políticas" %}selected{% endif %}>Derecho y ciencias políticas</option>
+            </select><br><br>
+        <input type="submit" value="actualizar programa">
+    </form>
+</body>
+</html>

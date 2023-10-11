@@ -1,103 +1,158 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>
-            Cargar estudiantes
-        </title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-        
-        <style>
-            .alert_fracaso {
-                padding: 20px;
-                background-color: #f44336;
-                color: white;
-            }
-            .alert_exito {
-                padding: 20px;
-                background-color: #00ff00;
-                color: white;
-            }
+<head>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <title>Cargar estudiantes</title>
+    <style>
+        body {
+            background-color: #283747;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.5); 
+            padding: 20px;
+            border-radius: 10px; 
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); 
+        }
+
+        .btn-custom.type2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 1em;
+            z-index: 1000; 
             
-            .closebtn {
-                margin-left: 15px;
-                color: white;
-                font-weight: bold;
-                float: right;
-                font-size: 22px;
-                line-height: 20px;
-                cursor: pointer;
-            }
+        }
+
+        .btn-custom {
+            position: relative;
+            padding: 1em 1.5em;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            outline: none;
+            font-size: 18px;
+            color: white;
             
-            .closebtn:hover {
-                color: black;
-            }
-            </style>
-    </head>
-    <body style="margin-top: 30px;margin-left: 30px;">
-      {% if existe == False %}
-        <script>
-          setTimeout(function() {
-              window.location.href = "/cargaEstudiantes/"; // Replace with your actual URL
-          });
-        </script>
-      {% endif %}
-        <div class="container">
-            <div class="row g-2">
-              <div class="col-lg-2">
-                <a class="btn btn-dark" href="/"><i class="bi bi-arrow-90deg-left"></i>Volver</a>
-              </div>
-              <div class="col-lg-8" style="float: left;">
+        }
+
+        .btn-custom.type1::after,
+        .btn-custom.type1::before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            border: 2px solid green; 
+            transition: all 0.6s ease;
+            border-radius: 2px;
+            
+        }
+
+        .btn-custom.type1::after {
+            bottom: 0;
+            right: 0;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-bottom-color: green;
+            border-right-color: green;
+        }
+
+        .btn-custom.type1::before {
+            top: 0;
+            left: 0;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-top-color: green;
+            border-left-color: green;
+        }
+
+        .btn-custom.type1:hover::after,
+        .btn-custom.type1:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-custom.type1:hover {
+            color: green; 
+        }
+    </style>
+</head>
+<body>
+    <a class="btn btn-custom type2" href="/vistaCoordinador"><i class="bi bi-arrow-90deg-left"></i>Volver</a>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="form-container">             
                 <form action="{% url "cargaEstudiantesDos" %}" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="display-4">Carga Estudiantes Aspirantes</div>
-                    <p></p>
-                    <div class="mb-3">
-                        <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
-                        <select class="form-select" id="file_type" name="file_type" style="border: 1px solid black; padding: 5px;" required disabled>
-                            <option value="2024-1" selected>2024-1</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Por favor seleccione un periodo lectivo
-                        </div>
+                      {% csrf_token %}
+                      <div class="display-4">Carga Estudiantes Aspi</div>
+                      <p></p>
+                      <div class="mb-3">
+                          <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
+                          <select class="form-select" id="file_type" name="file_type" style="border: 1px solid white; padding: 5px;" required disabled>
+                              <option value="2023-2" selected>2024-1</option>
+                          </select>
+                          <div class="invalid-feedback">
+                              Por favor seleccione un periodo lectivo
+                          </div>
                       </div>
                       <div class="mb-3">
-                        <label for="file_upload" class="form-label">Subir Archivo</label>
-                        <input class="form-control" type="file" id="file_upload"
-                           title="Upload excel file"
-                           name="excel_file"
-                           style="border: 1px solid black; padding: 5px;"
-                           required="required">
+                          <label for="file_upload" class="form-label">Subir Archivo</label>
+                          <input class="form-control" type="file" id="file_upload"
+                            title="Upload excel file"
+                            name="excel_file"
+                            style="border: 1px solid white; padding: 5px;"
+                            required="required">
                       </div>
-                    
-                  
-                    <p>
-                    <button class="btn btn-success" type="submit"
-                           value="Upload">Cargar</button>
-
-                        
-                </form>
-        
-                <p></p>
-                <hr>
-                {% if excel_data %}
-                <div class="alert_exito">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
-                    El archivo se cargó con éxito
-                  </div>
-                {% elif error %}
-                <div class="alert_fracaso">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
-                    No cargó el archivo
-                  </div>
-                {% else %}
-                {% endif %}
+                      <p>
+                      <button class="btn btn-custom type1" type="submit"
+                            value="Upload">Cargar</button>
+                  </form>
+                  <p></p>
+                  <hr>
+                  {% if excel_data %}
+                  <div class="alert_exito">
+                    {% if excel_data %}
+                      <script>
+                        setTimeout(function() {
+                            window.location.href = "/cargaEstudiantesDos/"; 
+                        }, 2000);
+                      </script>
+                    {% endif %}
+                      <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
+                      El archivo se cargó con éxito
+                      {% if actualizados > 0 %}
+                      <br>
+                        {{actualizados}} estudiante(s) actualizado(s)
+                      {% endif %}
+                      {% if agregados > 0 %}
+                        <br>
+                        {{agregados}} estudiante(s) agregado(s)
+                      
+                      {% endif %}
+                    </div>
+                  {% elif error %}
+                  <div class="alert_fracaso">
+                      <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
+                      Hubo un error al subir el archivo
+                    </div>
+                  {% else %}
+                  {% endif %}
+                </div>
               </div>
-              <div class="col-lg-2"></div>
             </div>
-          </div>
-        
-        
-    </body>
-</html>
+        </div>
+    </div>
+</body>
