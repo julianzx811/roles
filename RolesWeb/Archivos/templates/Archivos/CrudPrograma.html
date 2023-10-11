@@ -1,69 +1,180 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Programas List</title>
     <style>
         /* CSS for the modal */
- .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007bff; /* Button background color */
-        color: #fff; /* Button text color */
-        text-decoration: none; /* Remove underline from the link */
-        border: none; /* Remove border */
-        cursor: pointer;
-    }
-    /* Additional styles for when hovering over the button */
-    .button:hover {
-        background-color: #0056b3; /* Hover background color */
-    }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+        body {
+            background-color: #283747;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .modal-content {
-            background-color: #fff;
-            width: 300px;
-            margin: 100px auto;
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.5);
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1em 1.5em;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            outline: none;
+            font-size: 18px;
+            color: white;
+        }
+
+        .button.create-button,
+        .button.edit-button,
+        .button.delete-button {
+            background-color: transparent;
+            position: relative;
+            font-size: 15px;
+            color: white;
+        }
+
+        .button.edit-button {
+            margin-right: 10px;
+        }
+
+        .button.delete-button {
+            margin-left: 10px;
+        }
+        .button.edit-button {
+            margin-right: 10px;
+        }
+
+        .button.delete-button {
+            margin-left: 10px;
+        }
+        .button.create-button::after,
+        .button.edit-button::after,
+        .button.delete-button::after,
+        .button.create-button::before,
+        .button.edit-button::before,
+        .button.delete-button::before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            border: 2px solid green;
+            transition: all 0.6s ease;
+            border-radius: 2px;
+        }
+
+        .button.create-button::after,
+        .button.edit-button::after,
+        .button.delete-button::after {
+            bottom: 0;
+            right: 0;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-bottom-color: green;
+            border-right-color: green;
+        }
+
+        .button.create-button::before,
+        .button.edit-button::before,
+        .button.delete-button::before {
+            top: 0;
+            left: 0;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-top-color: green;
+            border-left-color: green;
+        }
+
+        .button.create-button:hover::after,
+        .button.edit-button:hover::after,
+        .button.delete-button:hover::after,
+        .button.create-button:hover::before,
+        .button.edit-button:hover::before,
+        .button.delete-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .button.create-button:hover,
+        .button.edit-button:hover,
+        .button.delete-button:hover {
+            color: green;
+        }
+
+        .program-table {
+            margin: 0 auto;
+        }
+
+        .btn-custom.type2 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 1em;
+            z-index: 1000;
+        }
+
+        .btn-custom.type1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 1em;
+            z-index: 1000;
+            background-color: transparent;
+            color: white;
+            transition: color 0.3s;
+        }
+
+        .btn-custom.type1:hover {
+            color: black;
         }
     </style>
 </head>
 <body>
-    <a class="button" href="{% url 'CreatePrograma' %}">Crear Programa</a>
-    <table>
-        <thead>
-            <tr>
-                <th>Programa</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        {% if funciono %}
-        <h1>{{funciono}}</h1>
-        {% endif %}
-        {% if error %}
-        <h1>{{error}}</h1>
-        {% endif %}
+    <a class="btn-custom type1" href="/vistaCoordinador"><i class="bi bi-arrow-90deg-left"></i>Volver</a>
+    <a class="btn-custom type2 button create-button" href="{% url 'CreatePrograma' %}">Crear Programa</a>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container">
+                    <!-- Resto del contenido -->
+                    <table class="program-table">
+                        <thead>
+                            <tr>
+                                <th>Programa</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        {% if funciono %}
+                        <h1>{{funciono}}</h1>
+                        {% endif %}
+                        {% if error %}
+                        <h1>{{error}}</h1>
+                        {% endif %}
 
-        <tbody>
-            {% for CurrentPrograma in programas %}
-                <tr>
-                    <td>{{ CurrentPrograma.programa }}</td>
-                    <td>
-                        <a class="button" href="{% url 'UpdatePrograma' CurrentPrograma.id %}">Edit</a>
-                        <a class="button" href="{% url 'DeletePrograma'  CurrentPrograma.id %}">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            
-        </tbody>
-    </table>
+                        <tbody>
+                            {% for CurrentPrograma in programas %}
+                                <tr>
+                                    <td>{{ CurrentPrograma.programa }}</td>
+                                    <td>
+                                        <a class="button edit-button" href="{% url 'UpdatePrograma' CurrentPrograma.id %}">Edit</a>
+                                        <a class="button delete-button" href="{% url 'DeletePrograma'  CurrentPrograma.id %}">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
