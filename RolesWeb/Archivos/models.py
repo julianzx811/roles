@@ -57,7 +57,7 @@ class Estado_Practica(models.Model):
     id_contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
 
-class Programa(models.Model):
+class Programas(models.Model):
     codigo = models.CharField(default="sin codigo", max_length=255, null=False)
     programa = models.CharField(default="sin programa", max_length=255, null=False)
     facultad = models.CharField(default="sin facultad", max_length=255, null=False)
@@ -70,7 +70,7 @@ class monitores(models.Model):
         primary_key=True, max_length=500, null=False
     )
     horas_disponibles = models.IntegerField()
-    programa = models.ForeignKey(Programa, on_delete=models.CASCADE)
+    programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
 
 
 class Perfiles(models.Model):

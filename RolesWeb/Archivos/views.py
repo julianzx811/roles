@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 from .forms import DatosForm, ProgramForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Perfiles, Plan_estudios, Programa, monitores)
+                     Perfiles, Plan_estudios, Programas, monitores)
 
 archivo_subido = True
 
@@ -52,30 +52,35 @@ def login(request):
 
 
 def CrearMonitor(request):
+    programas = Programas.objects.filter()
+    print(programas)
     if request.method == "GET":
         return render(
-            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
+            request, "Archivos/CrearMonitor.html", {"programas": programas}
         )
     else:
         creaMonitor = False
         monitorExiste = False
         form = DatosForm(request.POST)
+        print(form)
         if form.is_valid():
             if (
                 Perfiles.objects.filter(codigo=form.cleaned_data["codigo"]).exists()
                 == False
             ):
-                Nombre = form.cleaned_data["nombre"]
-                Codigo = form.cleaned_data["codigo"]
-                Correo = form.cleaned_data["correo"]
-                Horas = form.cleaned_data["horas"]
-                Programa = form.cleaned_data["programa"]
+            
+                Nombre = request.POST["nombre"]
+                Codigo = request.POST["codigo"]
+                Correo = request.POST["correo"]
+                Horas = request.POST["horas"]
+                Programa = request.POST.get("programa")
+                programa_asignado = Programas.objects.get(programa = Programa)
                 monitor = monitores(
                     nombre=Nombre,
                     codigo=Codigo,
                     correo_institucional=Correo,
                     horas_disponibles=Horas,
-                    programa=Programa,
+                    programa=programa_asignado,
                 )
                 monitor.save()
                 perfil = Perfiles(
@@ -95,6 +100,7 @@ def CrearMonitor(request):
                 "archivo_subido": archivo_subido,
                 "creaMonitor": creaMonitor,
                 "monitorExiste": monitorExiste,
+                "programas": programas,
             },
         )
 
@@ -369,7 +375,7 @@ def MostrarEstudiantes(request):
 
 
 def CrudPrograma(request):
-    programas = Programa.objects.all()
+    programas = Programas.objects.all()
     if request.method == "DELETE":
         return render(request, "Archivos/CrudPrograma.html", {"programas": programas})
     if request.method == "GET":
@@ -381,7 +387,7 @@ def CrudPrograma(request):
                 codigo = form.cleaned_data["codigo"]
                 programa = form.cleaned_data["programa"]
                 facultad = request.POST.get("facultad")
-                programita = Programa(
+                programita = Programas(
                     codigo=codigo, programa=programa, facultad=facultad
                 )
                 programita.save()
@@ -411,7 +417,7 @@ def CrudPrograma(request):
 
 def UpdatePrograma(request, programa_id):
     if request.method == "GET":
-        programa = Programa.objects.get(pk=programa_id)
+        programa = Programas.objects.get(pk=programa_id)
         programaobj = model_to_dict(programa)
         return render(
             request,
@@ -427,7 +433,7 @@ def UpdatePrograma(request, programa_id):
                 codigo = form.cleaned_data["codigo"]
                 programa = form.cleaned_data["programa"]
                 facultad = request.POST.get("facultad")
-                Programa.objects.filter(id=programa_id).update(
+                Programas.objects.filter(id=programa_id).update(
                     codigo=codigo, programa=programa, facultad=facultad
                 )
                 request.method = "GET"
@@ -442,7 +448,7 @@ def CreatePrograma(request):
 
 
 def DeletePrograma(request, programa_id):
-    programa = Programa.objects.get(pk=programa_id)
+    programa = Programas.objects.get(pk=programa_id)
     try:
         programa.delete()
         return CrudPrograma(request)
