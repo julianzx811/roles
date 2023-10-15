@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +32,7 @@
             left: 0;
             padding: 1em;
             z-index: 1000; 
-            
+
         }
 
         .btn-custom {
@@ -43,7 +44,7 @@
             outline: none;
             font-size: 18px;
             color: white;
-            
+
         }
 
         .btn-custom.type1::after,
@@ -56,7 +57,7 @@
             border: 2px solid green; 
             transition: all 0.6s ease;
             border-radius: 2px;
-            
+
         }
 
         .btn-custom.type1::after {
@@ -100,7 +101,7 @@
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <p></p>
-                        
+
                         <div class="mb-3">
                             <label for="codigo" class="form-label">Codigo:</label>
                             <input class="form-control" type="text" id="codigo" name="codigo" required>
@@ -126,7 +127,7 @@
                         {% endif %}
                         <button class="btn btn-custom type1" type="submit"
                             value="Upload">Ingresar</button>
-                        
+
                     </form>
                 </div>
             </div>

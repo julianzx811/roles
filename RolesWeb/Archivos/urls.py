@@ -37,19 +37,4 @@ urlpatterns = [
         views.indexEstudiante,
         name="vistaEstudiante",
     ),
-    path(
-        "vistaCoordinador/",
-        views.indexCoordinador,
-        name="vistaCoordinador",
-    ),
-    path(
-        "vistaDocenteMonitor/",
-        views.indexDocenteMonitor,
-        name="vistaDocenteMonitor",
-    ),
-    path(
-        "vistaEstudiante/",
-        views.indexEstudiante,
-        name="vistaEstudiante",
-    ),
 ]
