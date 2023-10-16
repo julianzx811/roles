@@ -11,15 +11,31 @@ urlpatterns = [
         views.cargarArchivoEstudiantesDos,
         name="cargaEstudiantesDos",
     ),
+    path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
+    path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
+    # CRUD operations for programs
+    path("vistaCoordinador/CrudProgramas/", views.CrudPrograma, name="CrudProgramas"),
+    path("CreatePrograma/", views.CreatePrograma, name="CreatePrograma"),
     path(
-        "CrearMonitor/",
-        views.CrearMonitor,
-        name="CrearMonitor",
+        "UpdatePrograma/<int:programa_id>/", views.UpdatePrograma, name="UpdatePrograma"
     ),
     path(
-        "MostrarEstudiantes/",
-        views.MostrarEstudiantes,
-        name="MostrarEstudiantes",
+        "DeletePrograma/<int:programa_id>/", views.DeletePrograma, name="DeletePrograma"
+    ),
+    path(
+        "vistaCoordinador/",
+        views.indexCoordinador,
+        name="vistaCoordinador",
+    ),
+    path(
+        "vistaDocenteMonitor/",
+        views.indexDocenteMonitor,
+        name="vistaDocenteMonitor",
+    ),
+    path(
+        "vistaEstudiante/",
+        views.indexEstudiante,
+        name="vistaEstudiante",
     ),
     path(
         "vistaCoordinador/",
