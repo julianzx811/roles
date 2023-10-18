@@ -1,11 +1,12 @@
 import openpyxl
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.http import FileResponse, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import DatosForm, ProgramForm
+from .forms import DatosForm, FileUploadForm, ProgramForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Perfiles, Plan_estudios, Programas, monitores)
+                     Perfiles, Plan_estudios, Programas, UploadedFile,
+                     monitores)
 
 archivo_subido = True
 
@@ -55,9 +56,7 @@ def CrearMonitor(request):
     programas = Programas.objects.filter()
     print(programas)
     if request.method == "GET":
-        return render(
-            request, "Archivos/CrearMonitor.html", {"programas": programas}
-        )
+        return render(request, "Archivos/CrearMonitor.html", {"programas": programas})
     else:
         creaMonitor = False
         monitorExiste = False
@@ -68,13 +67,12 @@ def CrearMonitor(request):
                 Perfiles.objects.filter(codigo=form.cleaned_data["codigo"]).exists()
                 == False
             ):
-            
                 Nombre = request.POST["nombre"]
                 Codigo = request.POST["codigo"]
                 Correo = request.POST["correo"]
                 Horas = request.POST["horas"]
                 Programa = request.POST.get("programa")
-                programa_asignado = Programas.objects.get(programa = Programa)
+                programa_asignado = Programas.objects.get(programa=Programa)
                 monitor = monitores(
                     nombre=Nombre,
                     codigo=Codigo,
@@ -455,3 +453,44 @@ def DeletePrograma(request, programa_id):
     except Exception as error:
         print(error)
         return CrudPrograma(request)
+
+
+def upload_file(request):
+    if request.method == "POST":
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("list_files")
+    else:
+        form = FileUploadForm()
+    return render(request, "upload_file.html", {"form": form})
+
+
+def list_files(request):
+    files = UploadedFile.objects.all()
+    return render(request, "list_files.html", {"files": files})
+
+
+def view_file(request, file_id):
+    file = get_object_or_404(UploadedFile, id=file_id)
+    return FileResponse(open(file.file.path, "rb"), as_attachment=True)
+
+
+def iniciar_practicas(request):
+    return render(request, "Archivos/iniciarPracticas.html")
+
+
+def SubirContranoLaboral(request):
+    return upload_file(request)
+
+
+def SubirAfiliacionARL(request):
+    return upload_file(request)
+
+
+def SubirDocumentoEPS(request):
+    return upload_file(request)
+
+
+def DocumentosSubidos(request):
+    return list_files(request)

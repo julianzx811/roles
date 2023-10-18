@@ -78,3 +78,8 @@ class Perfiles(models.Model):
     codigo = models.CharField(primary_key=True, max_length=255, null=False, default="1")
     nombre = models.CharField(max_length=255, null=False)
     cargo = models.CharField(max_length=255, null=False)
+
+
+class UploadedFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)

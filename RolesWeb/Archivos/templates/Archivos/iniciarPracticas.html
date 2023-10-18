@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -70,21 +70,13 @@
 <body>
     <div class="container text-center">
         <!-- <div class="display-6">Inicio</div> -->
-        <div class="display-4">Coordinador</div>
+        <div class="display-4">Subir archivos para iniciar practica</div>
         <p></p>
-        
-        <div class="d-flex justify-content-center">
-            <a class="btn btn-custom type1" href="/cargaEstudiantes">Subir listado estudiantes</a>
-            {% if existe %}
-                <a class="btn btn-custom type1" id="botonAspirantes" href="/cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
-            {% else %}
-                <a class="btn btn-custom type1 disabled" id="botonAspirantes" href="/cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
-            {% endif %}
-            <a class="btn btn-custom type1" href="/CrearMonitor">Crear Monitor</a>
-            <a class="btn btn-custom type1" href="/MostrarEstudiantes">Mostrar Estudiantes</a> 
-            <a class="btn btn-custom type1" href="CrudProgramas">Administrar programas</a>
-            <a class="btn btn-custom type1" href="CrudProgramas">subir archivo estudiantes</a>
-        </div>
+       </div>
+        <a class="btn btn-custom type1" href="SubirContranoLaboral">Subir contrato laboral</a>
+        <a class="btn btn-custom type1" href="SubirAfiliacionARL">Subir Afiliación de ARL</a>
+        <a class="btn btn-custom type1" href="SubirDocumentoEPS">Subir documento EPS</a>
+        <a class="btn btn-custom type1" href="DocumentosSubidos">documentos subidos</a>
     </div>
 </body>
 </html>
