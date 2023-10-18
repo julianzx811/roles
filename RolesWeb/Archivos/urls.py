@@ -38,4 +38,31 @@ urlpatterns = [
         views.indexEstudiante,
         name="vistaEstudiante",
     ),
+    path("upload/", views.upload_file, name="upload_file"),
+    path("files/", views.list_files, name="list_files"),
+    path("view_file/", views.view_file, name="view_file"),
+    path(
+        "vistaEstudiante/iniciarPractica/", views.iniciar_practicas, name="list_files"
+    ),
+    path(
+        "vistaEstudiante/iniciarPractica/SubirContranoLaboral/",
+        views.SubirContranoLaboral,
+        name="list_files",
+    ),
+    path(
+        "vistaEstudiante/iniciarPractica/SubirAfiliacionARL/",
+        views.SubirAfiliacionARL,
+        name="list_files",
+    ),
+    path(
+        "vistaEstudiante/iniciarPractica/SubirDocumentoEPS/",
+        views.SubirDocumentoEPS,
+        name="list_files",
+    ),
+    path(
+        "vistaEstudiante/iniciarPractica/DocumentosSubidos/",
+        views.DocumentosSubidos,
+        name="list_files",
+    ),
+    path("files/<int:file_id>/", views.view_file, name="view_file"),
 ]
