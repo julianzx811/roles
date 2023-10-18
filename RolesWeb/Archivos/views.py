@@ -1,3 +1,4 @@
+import random
 import openpyxl
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
@@ -50,6 +51,44 @@ def login(request):
                 {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
             )
 
+
+def AsignacionDocentesEstudiantes(request):
+    mostrar = None
+    if request.method == "GET":
+        mostrar = None
+        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar})
+    elif request.method == "POST":
+        mostrar = None
+        print(request.POST)
+        mostrar = request.POST.get('periodo_lectivo')
+        print(mostrar)
+        docentes = monitores.objects.filter(estado = True)
+        estudiantes = Estudiante.objects.filter(periodo_lectivo = mostrar)
+        horas_totales = 0
+        estudiantes_aleatorios = [x for x in estudiantes]
+        random.shuffle(estudiantes_aleatorios)
+        for docente in docentes:
+            horas_totales+=docente.horas_disponibles
+        porcentajes_docentes = []
+        for docente in docentes:
+            porcentajes_docentes.append(round((len(estudiantes)*(docente.horas_disponibles/horas_totales)),0))
+        if len(estudiantes) == 1:
+            porcentajes_docentes[0]+=1
+        acumulado = 0
+        for idx, x in enumerate(porcentajes_docentes):
+            for y in range(acumulado,acumulado+int(x)):
+                estudiante = Estudiante.objects.filter(codigo = estudiantes_aleatorios[acumulado].codigo).update(docente_asignado_id = docentes[idx])
+                acumulado+=1
+            
+        print(acumulado)
+        
+        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar,"docentes":docentes, "estudiantes":estudiantes})
+    else:
+        return render(
+                    request,
+                    "Archivos/asignacionDocentesEstudiantes.html",
+                    {"mostrar":mostrar}
+                )
 
 def CrearMonitor(request):
     programas = Programas.objects.filter()
@@ -156,7 +195,6 @@ def cargarArchivoEstudiantes(request):
             worksheet = wb["Sheet1"]
 
             excel_data = []
-
             for row in worksheet.iter_rows(min_row=14, max_col=8):
                 row_data = []
                 for cell in row:
@@ -279,6 +317,7 @@ def cargarArchivoEstudiantesDos(request):
                     plan_estudios.save()
 
                     if Estudiante.objects.filter(codigo=row[7]):
+                        print("estudiante ya existe")
                         estudiante = Estudiante.objects.filter(codigo=row[7])[0]
                         Estudiante.objects.filter(codigo=row[7]).update(
                             nombre=row[5],
@@ -286,7 +325,7 @@ def cargarArchivoEstudiantesDos(request):
                             cedula=row[8],
                             celular=row[9],
                         )
-
+                    
                         estudiante = Estudiante(
                             programa=row[11],
                             codigo=row[7],
@@ -319,10 +358,11 @@ def cargarArchivoEstudiantesDos(request):
 
                         if "Aplaza" in row[1]:
                             periodo_aplazado = row[1].split("Aplaza ")[1]
+                            periodo_aplazado = periodo_aplazado[:-1]
                             estudiante.periodo_lectivo = periodo_aplazado
                             print(
                                 "Peridodo despues de aplaza: "
-                                + row[1].split("Aplaza")[1]
+                                + row[1].split("Aplaza ")[1]
                             )
                         elif row[1] == "NO APROBADO":
                             estudiante.periodo_lectivo = "suspendido"

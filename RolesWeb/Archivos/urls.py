@@ -11,6 +11,7 @@ urlpatterns = [
         views.cargarArchivoEstudiantesDos,
         name="cargaEstudiantesDos",
     ),
+    path("vistaCoordinador/AsignacionDocentesEstudiantes/", views.AsignacionDocentesEstudiantes, name="AsignacionDocentesEstudiantes"),
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
     # CRUD operations for programs

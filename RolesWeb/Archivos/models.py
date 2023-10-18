@@ -5,6 +5,22 @@ class Plan_estudios(models.Model):
     jornada = models.CharField(max_length=255, null=True)
 
 
+class Programas(models.Model):
+    codigo = models.CharField(default="sin codigo", max_length=255, null=False)
+    programa = models.CharField(default="sin programa", max_length=255, null=False)
+    facultad = models.CharField(default="sin facultad", max_length=255, null=False)
+
+
+class monitores(models.Model):
+    nombre = models.CharField(max_length=255, null=False)
+    codigo = models.CharField(max_length=255, null=False)
+    correo_institucional = models.CharField(
+        primary_key=True, max_length=500, null=False
+    )
+    horas_disponibles = models.IntegerField()
+    programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
+    estado = models.BooleanField(default=1)
+
 class Estudiante(models.Model):
     codigo = models.CharField(primary_key=True, max_length=255, null=False)
     programa = models.CharField(max_length=255, null=False)
@@ -19,6 +35,12 @@ class Estudiante(models.Model):
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
+    docente_asignado = models.ForeignKey(
+        monitores,
+        on_delete=models.CASCADE,
+        null=True, 
+        default=None
+        )
 
 
 class Aspirantes(models.Model):
@@ -55,22 +77,6 @@ class Estado_Practica(models.Model):
     codigo_estudiante = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
     item = models.OneToOneField(Aspirantes, on_delete=models.CASCADE)
     id_contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
-
-
-class Programas(models.Model):
-    codigo = models.CharField(default="sin codigo", max_length=255, null=False)
-    programa = models.CharField(default="sin programa", max_length=255, null=False)
-    facultad = models.CharField(default="sin facultad", max_length=255, null=False)
-
-
-class monitores(models.Model):
-    nombre = models.CharField(max_length=255, null=False)
-    codigo = models.CharField(max_length=255, null=False)
-    correo_institucional = models.CharField(
-        primary_key=True, max_length=500, null=False
-    )
-    horas_disponibles = models.IntegerField()
-    programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
 
 
 class Perfiles(models.Model):
