@@ -1,57 +1,155 @@
+import random
 import openpyxl
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.forms.models import model_to_dict
+from django.http import FileResponse, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import DatosForm
+from .forms import DatosForm, FileUploadForm, ProgramForm
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Plan_estudios, monitores, Perfiles)
+                     Perfiles, Plan_estudios, Programas, UploadedFile,
+                     monitores)
 
 archivo_subido = True
 
 
-def index(request):
-    if request.method == "GET":
-        return render(
-            request, "Archivos/index.html"
-        )
-
 def login(request):
     if request.method == "GET":
-        return render(
-            request, "Archivos/login.html"
-        )
+        return render(request, "Archivos/login.html")
     if request.method == "POST":
         login_fallo = False
         usuario_existe = False
         codigo = request.POST["codigo"]
         contrasena = request.POST["contrasena"]
         cargo = request.POST.get("cargoUsuario")
-        if((Perfiles.objects.filter(codigo = codigo).exists())):
-            if ((Perfiles.objects.get(codigo = codigo).codigo == codigo) and (Perfiles.objects.get(codigo = codigo).contrasena == contrasena) and (Perfiles.objects.get(codigo = codigo).cargo == cargo)):
+        print(codigo, contrasena, cargo)
+        if Perfiles.objects.filter(codigo=codigo).exists():
+            if (
+                (Perfiles.objects.get(codigo=codigo).codigo == codigo)
+                and (Perfiles.objects.get(codigo=codigo).contrasena == contrasena)
+                and (Perfiles.objects.get(codigo=codigo).cargo == cargo)
+            ):
                 print("Login exitoso")
-                if(cargo == 'Estudiante'):
-                    return redirect(
-                        "/vistaEstudiante"
-                    )
-                elif(cargo == 'Docente Monitor'):
+                if cargo == "Estudiante":
+                    return redirect("/vistaEstudiante")
+                elif cargo == "Docente Monitor":
                     return redirect(
                         "/vistaDocenteMonitor",
-                        
                     )
-                elif(cargo == 'Coordinador'):
-                    return redirect(
-                        "/vistaCoordinador"
-                    )
+                elif cargo == "Coordinador":
+                    return redirect("/vistaCoordinador")
             else:
                 login_fallo = True
-                return render(request, 
-                    "Archivos/login.html",{'login_fallo':login_fallo,'usuario_existe':usuario_existe}
+                return render(
+                    request,
+                    "Archivos/login.html",
+                    {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
                 )
         else:
             usuario_existe = True
-            return render(request, 
-                "Archivos/login.html",{'login_fallo':login_fallo,'usuario_existe':usuario_existe}
+            return render(
+                request,
+                "Archivos/login.html",
+                {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
             )
+
+
+def AsignacionDocentesEstudiantes(request):
+    mostrar = None
+    if request.method == "GET":
+        mostrar = None
+        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar})
+    elif request.method == "POST":
+        mostrar = None
+        print(request.POST)
+        mostrar = request.POST.get('periodo_lectivo')
+        print(mostrar)
+        docentes = monitores.objects.filter(estado = True)
+        estudiantes = Estudiante.objects.filter(periodo_lectivo = mostrar)
+        horas_totales = 0
+        estudiantes_aleatorios = [x for x in estudiantes]
+        random.shuffle(estudiantes_aleatorios)
+        for docente in docentes:
+            horas_totales+=docente.horas_disponibles
+        porcentajes_docentes = []
+        for docente in docentes:
+            porcentajes_docentes.append(round((len(estudiantes)*(docente.horas_disponibles/horas_totales)),0))
+        if len(estudiantes) == 1:
+            porcentajes_docentes[0]+=1
+        acumulado = 0
+        for idx, x in enumerate(porcentajes_docentes):
+            for y in range(acumulado,acumulado+int(x)):
+                estudiante = Estudiante.objects.filter(codigo = estudiantes_aleatorios[acumulado].codigo).update(docente_asignado_id = docentes[idx])
+                acumulado+=1
+            
+        print(acumulado)
+        
+        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar,"docentes":docentes, "estudiantes":estudiantes})
+    else:
+        return render(
+                    request,
+                    "Archivos/asignacionDocentesEstudiantes.html",
+                    {"mostrar":mostrar}
+                )
+
+def CrearMonitor(request):
+    programas = Programas.objects.filter()
+    print(programas)
+    if request.method == "GET":
+        return render(request, "Archivos/CrearMonitor.html", {"programas": programas})
+    else:
+        creaMonitor = False
+        monitorExiste = False
+        form = DatosForm(request.POST)
+        print(form)
+        if form.is_valid():
+            if (
+                Perfiles.objects.filter(codigo=form.cleaned_data["codigo"]).exists()
+                == False
+            ):
+                Nombre = request.POST["nombre"]
+                Codigo = request.POST["codigo"]
+                Correo = request.POST["correo"]
+                Horas = request.POST["horas"]
+                Programa = request.POST.get("programa")
+                programa_asignado = Programas.objects.get(programa=Programa)
+                monitor = monitores(
+                    nombre=Nombre,
+                    codigo=Codigo,
+                    correo_institucional=Correo,
+                    horas_disponibles=Horas,
+                    programa=programa_asignado,
+                )
+                monitor.save()
+                perfil = Perfiles(
+                    codigo=Codigo,
+                    contrasena=Codigo,
+                    nombre=Nombre,
+                    cargo="Docente Monitor",
+                )
+                perfil.save()
+                creaMonitor = True
+            else:
+                monitorExiste = True
+        return render(
+            request,
+            "Archivos/CrearMonitor.html",
+            {
+                "archivo_subido": archivo_subido,
+                "creaMonitor": creaMonitor,
+                "monitorExiste": monitorExiste,
+                "programas": programas,
+            },
+        )
+
+
+def crearPrograma(request):
+    return render(request, "Archivos/CrudPrograma.html")
+
+
+def index(request):
+    if request.method == "GET":
+        return render(request, "Archivos/index.html")
+
 
 def indexCoordinador(request):
     existe = Estudiante.objects.exists()
@@ -61,13 +159,16 @@ def indexCoordinador(request):
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
+
 def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
     return render(
         request,
+        "Archivos/index.html",
         "Archivos/vistaDocenteMonitor.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
+
 
 def indexEstudiante(request):
     existe = Estudiante.objects.exists()
@@ -92,7 +193,6 @@ def cargarArchivoEstudiantes(request):
             worksheet = wb["Sheet1"]
 
             excel_data = []
-
             for row in worksheet.iter_rows(min_row=14, max_col=8):
                 row_data = []
                 for cell in row:
@@ -106,35 +206,72 @@ def cargarArchivoEstudiantes(request):
                     print(f"La fila no tiene suficientes elementos: {row_data}")
 
             for datos in excel_data:
-                if (Estudiante.objects.filter(codigo=datos[2])):
-                    if ((Estudiante.objects.get(codigo=datos[2]).nombre == datos[6]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_institucional == datos[3]) == False) or ((Estudiante.objects.get(codigo=datos[2]).email_personal == datos[4]) == False) or ((Estudiante.objects.get(codigo=datos[2]).telefono == datos[5]) == False):
+                if Estudiante.objects.filter(codigo=datos[2]):
+                    if (
+                        (
+                            (Estudiante.objects.get(codigo=datos[2]).nombre == datos[6])
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(
+                                    codigo=datos[2]
+                                ).email_institucional
+                                == datos[3]
+                            )
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(codigo=datos[2]).email_personal
+                                == datos[4]
+                            )
+                            == False
+                        )
+                        or (
+                            (
+                                Estudiante.objects.get(codigo=datos[2]).telefono
+                                == datos[5]
+                            )
+                            == False
+                        )
+                    ):
                         actualizados += 1
                         print(actualizados)
-                        Estudiante.objects.filter(codigo=datos[2]).update(email_institucional=datos[3], email_personal=datos[4], telefono=datos[5], nombre=datos[6])     
+                        Estudiante.objects.filter(codigo=datos[2]).update(
+                            email_institucional=datos[3],
+                            email_personal=datos[4],
+                            telefono=datos[5],
+                            nombre=datos[6],
+                        )
                 else:
                     est1 = Estudiante(
-                    codigo=datos[2],
-                    programa=datos[1],
-                    email_institucional=datos[3],
-                    email_personal=datos[4],
-                    telefono=datos[5],
-                    nombre=datos[6],
-                    periodo_lectivo='2023-2',
+                        codigo=datos[2],
+                        programa=datos[1],
+                        email_institucional=datos[3],
+                        email_personal=datos[4],
+                        telefono=datos[5],
+                        nombre=datos[6],
+                        periodo_lectivo="2023-2",
                     )
                     agregados += 1
-                    print('agregados',agregados)
+                    print("agregados", agregados)
                     est1.save()
                     perfil = Perfiles(
-                        codigo = datos[2],
-                        contrasena = datos[2],
-                        nombre= datos[6],
-                        cargo='Estudiante',
-                    )  
+                        codigo=datos[2],
+                        contrasena=datos[2],
+                        nombre=datos[6],
+                        cargo="Estudiante",
+                    )
                     perfil.save()
             return render(
                 request,
                 "Archivos/cargaEstudiantes.html",
-                {"excel_data": excel_data, "agregados":agregados, "actualizados":actualizados},
+                {
+                    "excel_data": excel_data,
+                    "agregados": agregados,
+                    "actualizados": actualizados,
+                },
             )
 
         except Exception as error:
@@ -178,6 +315,7 @@ def cargarArchivoEstudiantesDos(request):
                     plan_estudios.save()
 
                     if Estudiante.objects.filter(codigo=row[7]):
+                        print("estudiante ya existe")
                         estudiante = Estudiante.objects.filter(codigo=row[7])[0]
                         Estudiante.objects.filter(codigo=row[7]).update(
                             nombre=row[5],
@@ -185,7 +323,7 @@ def cargarArchivoEstudiantesDos(request):
                             cedula=row[8],
                             celular=row[9],
                         )
-
+                    
                         estudiante = Estudiante(
                             programa=row[11],
                             codigo=row[7],
@@ -218,10 +356,11 @@ def cargarArchivoEstudiantesDos(request):
 
                         if "Aplaza" in row[1]:
                             periodo_aplazado = row[1].split("Aplaza ")[1]
+                            periodo_aplazado = periodo_aplazado[:-1]
                             estudiante.periodo_lectivo = periodo_aplazado
                             print(
                                 "Peridodo despues de aplaza: "
-                                + row[1].split("Aplaza")[1]
+                                + row[1].split("Aplaza ")[1]
                             )
                         elif row[1] == "NO APROBADO":
                             estudiante.periodo_lectivo = "suspendido"
@@ -255,7 +394,11 @@ def cargarArchivoEstudiantesDos(request):
             return render(
                 request,
                 "Archivos/CargaEstudiantesDos.html",
-                {"excel_data": excel_data, "existe": existe, "actualizados":actualizados},
+                {
+                    "excel_data": excel_data,
+                    "existe": existe,
+                    "actualizados": actualizados,
+                },
             )
         except Exception as error:
             print(error)
@@ -263,47 +406,131 @@ def cargarArchivoEstudiantesDos(request):
                 request, "Archivos/CargaEstudiantesDos.html", {"error": str(error)}
             )
 
+
 def MostrarEstudiantes(request):
     estudiantes = Estudiante.objects.filter()
-    return render(
-            request, "Archivos/verEstudiantes.html", {"estudiantes": estudiantes}
-    )
+    return render(request, "Archivos/verEstudiantes.html", {"estudiantes": estudiantes})
 
 
-def CrearMonitor(request):
+def CrudPrograma(request):
+    programas = Programas.objects.all()
+    if request.method == "DELETE":
+        return render(request, "Archivos/CrudPrograma.html", {"programas": programas})
     if request.method == "GET":
-        return render(
-            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido}
-        )
-    else:
-        creaMonitor = False
-        monitorExiste = False
-        form = DatosForm(request.POST)
+        return render(request, "Archivos/CrudPrograma.html", {"programas": programas})
+    if request.method == "POST":
+        form = ProgramForm(request.POST)
         if form.is_valid():
-            if Perfiles.objects.filter(codigo = form.cleaned_data["codigo"]).exists() == False:
-                Nombre = form.cleaned_data["nombre"]
-                Codigo = form.cleaned_data["codigo"]
-                Correo = form.cleaned_data["correo"]
-                Horas = form.cleaned_data["horas"]
-                Programa = form.cleaned_data["programa"]
-                monitor = monitores(
-                    nombre=Nombre,
-                    codigo=Codigo,
-                    correo_institucional=Correo,
-                    horas_disponibles=Horas,
-                    programa=Programa,
+            try:
+                codigo = form.cleaned_data["codigo"]
+                programa = form.cleaned_data["programa"]
+                facultad = request.POST.get("facultad")
+                programita = Programas(
+                    codigo=codigo, programa=programa, facultad=facultad
                 )
-                monitor.save()
-                perfil = Perfiles(
-                            codigo = Codigo,
-                            contrasena = Codigo,
-                            nombre= Nombre,
-                            cargo='Docente Monitor',
-                        )  
-                perfil.save()
-                creaMonitor = True
-            else:
-                monitorExiste = True
+                programita.save()
+                return render(
+                    request,
+                    "Archivos/CrudPrograma.html",
+                    {
+                        "programas": programas,
+                        "hecho": "se registro el monitor correctamente",
+                    },
+                )
+            except Exception as error:
+                print(error)
+                return render(
+                    request,
+                    "Archivos/CrudPrograma.html",
+                    {"error": error, "programas": programas},
+                )
+        else:
+            print(form.errors)
+            return render(
+                request,
+                "Archivos/CrearMonitor.html",
+                {"error": "algo salio mal", "programas": programas},
+            )
+
+
+def UpdatePrograma(request, programa_id):
+    if request.method == "GET":
+        programa = Programas.objects.get(pk=programa_id)
+        programaobj = model_to_dict(programa)
         return render(
-            request, "Archivos/CrearMonitor.html", {"archivo_subido": archivo_subido, "creaMonitor": creaMonitor, "monitorExiste": monitorExiste}
+            request,
+            "Archivos/UpdatePrograma.html",
+            {"programa": programaobj, "id": programa_id},
         )
+    elif request.method == "POST":
+        print("entro1")
+        form = ProgramForm(request.POST)
+        if form.is_valid():
+            try:
+                print("entro2")
+                codigo = form.cleaned_data["codigo"]
+                programa = form.cleaned_data["programa"]
+                facultad = request.POST.get("facultad")
+                Programas.objects.filter(id=programa_id).update(
+                    codigo=codigo, programa=programa, facultad=facultad
+                )
+                request.method = "GET"
+                return CrudPrograma(request)
+            except Exception as error:
+                print(error)
+                return CrudPrograma(request)
+
+
+def CreatePrograma(request):
+    return render(request, "Archivos/CreatePrograma.html")
+
+
+def DeletePrograma(request, programa_id):
+    programa = Programas.objects.get(pk=programa_id)
+    try:
+        programa.delete()
+        return CrudPrograma(request)
+    except Exception as error:
+        print(error)
+        return CrudPrograma(request)
+
+
+def upload_file(request):
+    if request.method == "POST":
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("list_files")
+    else:
+        form = FileUploadForm()
+    return render(request, "upload_file.html", {"form": form})
+
+
+def list_files(request):
+    files = UploadedFile.objects.all()
+    return render(request, "list_files.html", {"files": files})
+
+
+def view_file(request, file_id):
+    file = get_object_or_404(UploadedFile, id=file_id)
+    return FileResponse(open(file.file.path, "rb"), as_attachment=True)
+
+
+def iniciar_practicas(request):
+    return render(request, "Archivos/iniciarPracticas.html")
+
+
+def SubirContranoLaboral(request):
+    return upload_file(request)
+
+
+def SubirAfiliacionARL(request):
+    return upload_file(request)
+
+
+def SubirDocumentoEPS(request):
+    return upload_file(request)
+
+
+def DocumentosSubidos(request):
+    return list_files(request)

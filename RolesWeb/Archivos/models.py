@@ -5,6 +5,22 @@ class Plan_estudios(models.Model):
     jornada = models.CharField(max_length=255, null=True)
 
 
+class Programas(models.Model):
+    codigo = models.CharField(default="sin codigo", max_length=255, null=False)
+    programa = models.CharField(default="sin programa", max_length=255, null=False)
+    facultad = models.CharField(default="sin facultad", max_length=255, null=False)
+
+
+class monitores(models.Model):
+    nombre = models.CharField(max_length=255, null=False)
+    codigo = models.CharField(max_length=255, null=False)
+    correo_institucional = models.CharField(
+        primary_key=True, max_length=500, null=False
+    )
+    horas_disponibles = models.IntegerField()
+    programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
+    estado = models.BooleanField(default=1)
+
 class Estudiante(models.Model):
     codigo = models.CharField(primary_key=True, max_length=255, null=False)
     programa = models.CharField(max_length=255, null=False)
@@ -19,6 +35,12 @@ class Estudiante(models.Model):
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
+    docente_asignado = models.ForeignKey(
+        monitores,
+        on_delete=models.CASCADE,
+        null=True, 
+        default=None
+        )
 
 
 class Aspirantes(models.Model):
@@ -57,17 +79,13 @@ class Estado_Practica(models.Model):
     id_contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
 
 
-class monitores(models.Model):
-    nombre = models.CharField(max_length=255, null=False)
-    codigo = models.CharField(max_length=255, null=False)
-    correo_institucional = models.CharField(
-        primary_key=True, max_length=500, null=False
-    )
-    horas_disponibles = models.IntegerField()
-    programa = models.CharField(default="sin programa", max_length=255, null=False)
-
 class Perfiles(models.Model):
-    contrasena =  models.CharField(max_length=255,null=False)
-    codigo = models.CharField(max_length=255,null=False, default='1')
-    nombre = models.CharField(max_length=255,null=False)
-    cargo = models.CharField(max_length=255,null=False)
+    contrasena = models.CharField(max_length=255, null=False)
+    codigo = models.CharField(primary_key=True, max_length=255, null=False, default="1")
+    nombre = models.CharField(max_length=255, null=False)
+    cargo = models.CharField(max_length=255, null=False)
+
+
+class UploadedFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)

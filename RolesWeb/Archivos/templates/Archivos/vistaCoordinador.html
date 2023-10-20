@@ -68,12 +68,15 @@
     </style>
 </head>
 <body>
+    
     <div class="container text-center">
+        <a class="btn btn-danger" href="/login">Cerrar Sesion</a>
         <!-- <div class="display-6">Inicio</div> -->
         <div class="display-4">Coordinador</div>
         <p></p>
         
         <div class="d-flex justify-content-center">
+            
             <a class="btn btn-custom type1" href="/cargaEstudiantes">Subir listado estudiantes</a>
             {% if existe %}
                 <a class="btn btn-custom type1" id="botonAspirantes" href="/cargaEstudiantesDos">Subir Estudiantes Aspirantes</a>
@@ -82,6 +85,9 @@
             {% endif %}
             <a class="btn btn-custom type1" href="/CrearMonitor">Crear Monitor</a>
             <a class="btn btn-custom type1" href="/MostrarEstudiantes">Mostrar Estudiantes</a> 
+            <a class="btn btn-custom type1" href="CrudProgramas">Administrar programas</a>
+            <a class="btn btn-custom type1" href="CrudProgramas">subir archivo estudiantes</a>
+            <a class="btn btn-custom type1" href="AsignacionDocentesEstudiantes">Asignar Docentes y Estudiantes</a>
         </div>
     </div>
 </body>

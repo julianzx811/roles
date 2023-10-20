@@ -134,8 +134,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="programa">Programa:</label>
-                            <input type="text" id="programa" name="programa" required>
+                            <label for="file_type" class="form-label">Programas</label>
+                            <select class="form-select" id="programa" name="programa" style="border: 1px solid white; padding: 5px;" required>
+                                {% for programa in programas %}
+                                <option value="{{programa.programa}}" selected>{{programa.programa}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div class="mb-3 text-center">

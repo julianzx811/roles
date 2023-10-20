@@ -11,6 +11,7 @@ urlpatterns = [
         views.cargarArchivoEstudiantesDos,
         name="cargaEstudiantesDos",
     ),
+    path("vistaCoordinador/AsignacionDocentesEstudiantes/", views.AsignacionDocentesEstudiantes, name="AsignacionDocentesEstudiantes"),
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
     # CRUD operations for programs
@@ -37,19 +38,31 @@ urlpatterns = [
         views.indexEstudiante,
         name="vistaEstudiante",
     ),
+    path("upload/", views.upload_file, name="upload_file"),
+    path("files/", views.list_files, name="list_files"),
+    path("view_file/", views.view_file, name="view_file"),
     path(
-        "vistaCoordinador/",
-        views.indexCoordinador,
-        name="vistaCoordinador",
+        "vistaEstudiante/iniciarPractica/", views.iniciar_practicas, name="list_files"
     ),
     path(
-        "vistaDocenteMonitor/",
-        views.indexDocenteMonitor,
-        name="vistaDocenteMonitor",
+        "vistaEstudiante/iniciarPractica/SubirContranoLaboral/",
+        views.SubirContranoLaboral,
+        name="list_files",
     ),
     path(
-        "vistaEstudiante/",
-        views.indexEstudiante,
-        name="vistaEstudiante",
+        "vistaEstudiante/iniciarPractica/SubirAfiliacionARL/",
+        views.SubirAfiliacionARL,
+        name="list_files",
     ),
+    path(
+        "vistaEstudiante/iniciarPractica/SubirDocumentoEPS/",
+        views.SubirDocumentoEPS,
+        name="list_files",
+    ),
+    path(
+        "vistaEstudiante/iniciarPractica/DocumentosSubidos/",
+        views.DocumentosSubidos,
+        name="list_files",
+    ),
+    path("files/<int:file_id>/", views.view_file, name="view_file"),
 ]
