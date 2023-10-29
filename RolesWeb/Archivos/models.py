@@ -21,6 +21,7 @@ class monitores(models.Model):
     programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
     estado = models.BooleanField(default=1)
 
+
 class Estudiante(models.Model):
     codigo = models.CharField(primary_key=True, max_length=255, null=False)
     programa = models.CharField(max_length=255, null=False)
@@ -36,11 +37,8 @@ class Estudiante(models.Model):
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
     docente_asignado = models.ForeignKey(
-        monitores,
-        on_delete=models.CASCADE,
-        null=True, 
-        default=None
-        )
+        monitores, on_delete=models.CASCADE, null=True, default=None
+    )
 
 
 class Aspirantes(models.Model):
@@ -86,6 +84,19 @@ class Perfiles(models.Model):
     cargo = models.CharField(max_length=255, null=False)
 
 
-class UploadedFile(models.Model):
+class UploadedARLFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+
+
+class UploadedEPSFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+
+
+class UploadedLABORALFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)

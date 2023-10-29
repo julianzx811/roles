@@ -1,13 +1,15 @@
 import random
+
 import openpyxl
 from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import DatosForm, FileUploadForm, ProgramForm
+from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
+                    FileUploadLABORALForm, ProgramForm)
 from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
-                     Perfiles, Plan_estudios, Programas, UploadedFile,
-                     monitores)
+                     Perfiles, Plan_estudios, Programas, UploadedARLFile,
+                     UploadedEPSFile, UploadedLABORALFile, monitores)
 
 archivo_subido = True
 
@@ -57,39 +59,50 @@ def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
         mostrar = None
-        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar})
+        return render(
+            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar}
+        )
     elif request.method == "POST":
         mostrar = None
         print(request.POST)
-        mostrar = request.POST.get('periodo_lectivo')
+        mostrar = request.POST.get("periodo_lectivo")
         print(mostrar)
-        docentes = monitores.objects.filter(estado = True)
-        estudiantes = Estudiante.objects.filter(periodo_lectivo = mostrar)
+        docentes = monitores.objects.filter(estado=True)
+        estudiantes = Estudiante.objects.filter(periodo_lectivo=mostrar)
         horas_totales = 0
         estudiantes_aleatorios = [x for x in estudiantes]
         random.shuffle(estudiantes_aleatorios)
         for docente in docentes:
-            horas_totales+=docente.horas_disponibles
+            horas_totales += docente.horas_disponibles
         porcentajes_docentes = []
         for docente in docentes:
-            porcentajes_docentes.append(round((len(estudiantes)*(docente.horas_disponibles/horas_totales)),0))
+            porcentajes_docentes.append(
+                round(
+                    (len(estudiantes) * (docente.horas_disponibles / horas_totales)), 0
+                )
+            )
         if len(estudiantes) == 1:
-            porcentajes_docentes[0]+=1
+            porcentajes_docentes[0] += 1
         acumulado = 0
         for idx, x in enumerate(porcentajes_docentes):
-            for y in range(acumulado,acumulado+int(x)):
-                estudiante = Estudiante.objects.filter(codigo = estudiantes_aleatorios[acumulado].codigo).update(docente_asignado_id = docentes[idx])
-                acumulado+=1
-            
+            for y in range(acumulado, acumulado + int(x)):
+                estudiante = Estudiante.objects.filter(
+                    codigo=estudiantes_aleatorios[acumulado].codigo
+                ).update(docente_asignado_id=docentes[idx])
+                acumulado += 1
+
         print(acumulado)
-        
-        return render(request, "Archivos/asignacionDocentesEstudiantes.html",{"mostrar":mostrar,"docentes":docentes, "estudiantes":estudiantes})
+
+        return render(
+            request,
+            "Archivos/asignacionDocentesEstudiantes.html",
+            {"mostrar": mostrar, "docentes": docentes, "estudiantes": estudiantes},
+        )
     else:
         return render(
-                    request,
-                    "Archivos/asignacionDocentesEstudiantes.html",
-                    {"mostrar":mostrar}
-                )
+            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar}
+        )
+
 
 def CrearMonitor(request):
     programas = Programas.objects.filter()
@@ -323,7 +336,7 @@ def cargarArchivoEstudiantesDos(request):
                             cedula=row[8],
                             celular=row[9],
                         )
-                    
+
                         estudiante = Estudiante(
                             programa=row[11],
                             codigo=row[7],
@@ -495,24 +508,13 @@ def DeletePrograma(request, programa_id):
         return CrudPrograma(request)
 
 
-def upload_file(request):
-    if request.method == "POST":
-        form = FileUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("list_files")
-    else:
-        form = FileUploadForm()
-    return render(request, "upload_file.html", {"form": form})
-
-
 def list_files(request):
-    files = UploadedFile.objects.all()
+    files = UploadedARLFile.objects.all()
     return render(request, "list_files.html", {"files": files})
 
 
 def view_file(request, file_id):
-    file = get_object_or_404(UploadedFile, id=file_id)
+    file = get_object_or_404(FileUploadARLForm, id=file_id)
     return FileResponse(open(file.file.path, "rb"), as_attachment=True)
 
 
@@ -520,16 +522,27 @@ def iniciar_practicas(request):
     return render(request, "Archivos/iniciarPracticas.html")
 
 
+def upload_file(request, stringhtml, formxd):
+    if request.method == "POST":
+        form = formxd(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("list_files")
+    else:
+        form = formxd()
+    return render(request, str(stringhtml), {"form": form})
+
+
 def SubirContranoLaboral(request):
-    return upload_file(request)
+    return upload_file(request, "SubirContranoLaboral.html", FileUploadLABORALForm)
 
 
 def SubirAfiliacionARL(request):
-    return upload_file(request)
+    return upload_file(request, "SubirAfiliacionARL.html", FileUploadARLForm)
 
 
 def SubirDocumentoEPS(request):
-    return upload_file(request)
+    return upload_file(request, "SubirDocumentoEPS.html", FileUploadEPSForm)
 
 
 def DocumentosSubidos(request):
