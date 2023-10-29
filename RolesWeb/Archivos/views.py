@@ -32,7 +32,7 @@ def login(request):
             ):
                 print("Login exitoso")
                 if cargo == "Estudiante":
-                    return redirect("/vistaEstudiante")
+                    return redirect("/vistaEstudiante/" + str(codigo))
                 elif cargo == "Docente Monitor":
                     return redirect(
                         "/vistaDocenteMonitor",
@@ -183,12 +183,16 @@ def indexDocenteMonitor(request):
     )
 
 
-def indexEstudiante(request):
+def indexEstudiante(request, estudiante_id):
     existe = Estudiante.objects.exists()
     return render(
         request,
         "Archivos/vistaEstudiante.html",
-        {"archivo_subido": archivo_subido, "existe": existe},
+        {
+            "archivo_subido": archivo_subido,
+            "existe": existe,
+            "estudiante_id": estudiante_id,
+        },
     )
 
 
@@ -508,9 +512,22 @@ def DeletePrograma(request, programa_id):
         return CrudPrograma(request)
 
 
-def list_files(request):
-    files = UploadedARLFile.objects.all()
-    return render(request, "list_files.html", {"files": files})
+def list_files(request, estudiante_id):
+    try:
+        files1 = UploadedARLFile.objects.filter(estudianteId=estudiante_id)
+        files2 = UploadedEPSFile.objects.filter(estudianteId=estudiante_id)
+        files3 = UploadedLABORALFile.objects.filter(estudianteId=estudiante_id)
+        context = {
+            "files1": files1,
+            "files2": files2,
+            "files3": files3,
+        }
+        return render(request, "list_files.html", context)
+    except Exception as error:
+        print(error)
+        return render(
+            request, "list_files.html", {"files1": None, "files2": None, "files3": None}
+        )
 
 
 def view_file(request, file_id):
@@ -518,32 +535,42 @@ def view_file(request, file_id):
     return FileResponse(open(file.file.path, "rb"), as_attachment=True)
 
 
-def iniciar_practicas(request):
+def iniciar_practicas(request, estudiante_id):
     return render(request, "Archivos/iniciarPracticas.html")
 
 
-def upload_file(request, stringhtml, formxd):
+def upload_file(request, stringhtml, formxd, estudiante_id):
+    perfil = Perfiles.objects.get(pk=estudiante_id)
     if request.method == "POST":
         form = formxd(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect("list_files")
+            # Create an instance of UploadedLABORALFile and set the estudianteId
+            uploaded_file = form.save(commit=False)
+            uploaded_file.estudianteId = perfil  # Associate with the profile
+            uploaded_file.save()  # Save the instance with the profile association
+            return redirect("../")
     else:
         form = formxd()
     return render(request, str(stringhtml), {"form": form})
 
 
-def SubirContranoLaboral(request):
-    return upload_file(request, "SubirContranoLaboral.html", FileUploadLABORALForm)
+def SubirContranoLaboral(request, estudiante_id):
+    return upload_file(
+        request, "SubirContranoLaboral.html", FileUploadLABORALForm, estudiante_id
+    )
 
 
-def SubirAfiliacionARL(request):
-    return upload_file(request, "SubirAfiliacionARL.html", FileUploadARLForm)
+def SubirAfiliacionARL(request, estudiante_id):
+    return upload_file(
+        request, "SubirAfiliacionARL.html", FileUploadARLForm, estudiante_id
+    )
 
 
-def SubirDocumentoEPS(request):
-    return upload_file(request, "SubirDocumentoEPS.html", FileUploadEPSForm)
+def SubirDocumentoEPS(request, estudiante_id):
+    return upload_file(
+        request, "SubirDocumentoEPS.html", FileUploadEPSForm, estudiante_id
+    )
 
 
-def DocumentosSubidos(request):
-    return list_files(request)
+def DocumentosSubidos(request, estudiante_id):
+    return list_files(request, estudiante_id)

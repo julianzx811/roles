@@ -11,7 +11,11 @@ urlpatterns = [
         views.cargarArchivoEstudiantesDos,
         name="cargaEstudiantesDos",
     ),
-    path("vistaCoordinador/AsignacionDocentesEstudiantes/", views.AsignacionDocentesEstudiantes, name="AsignacionDocentesEstudiantes"),
+    path(
+        "vistaCoordinador/AsignacionDocentesEstudiantes/",
+        views.AsignacionDocentesEstudiantes,
+        name="AsignacionDocentesEstudiantes",
+    ),
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
     # CRUD operations for programs
@@ -34,35 +38,37 @@ urlpatterns = [
         name="vistaDocenteMonitor",
     ),
     path(
-        "vistaEstudiante/",
+        "vistaEstudiante/<int:estudiante_id>/",
         views.indexEstudiante,
         name="vistaEstudiante",
     ),
     path("upload/", views.upload_file, name="upload_file"),
-    path("files/", views.list_files, name="list_files"),
+    path("files/<int:estudiante_id>/", views.list_files, name="list_files"),
     path("view_file/", views.view_file, name="view_file"),
     path(
-        "vistaEstudiante/iniciarPractica/", views.iniciar_practicas, name="list_files"
+        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/",
+        views.iniciar_practicas,
+        name="iniciarpractiquica",
     ),
     path(
-        "vistaEstudiante/iniciarPractica/SubirContranoLaboral/",
+        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirContranoLaboral/",
         views.SubirContranoLaboral,
-        name="list_files",
+        name="subir_contrano_laboral",
     ),
     path(
-        "vistaEstudiante/iniciarPractica/SubirAfiliacionARL/",
+        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirAfiliacionARL/",
         views.SubirAfiliacionARL,
-        name="list_files",
+        name="subir_afiliacion_arl",
     ),
     path(
-        "vistaEstudiante/iniciarPractica/SubirDocumentoEPS/",
+        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirDocumentoEPS/",
         views.SubirDocumentoEPS,
-        name="list_files",
+        name="subir_documento_eps",
     ),
     path(
-        "vistaEstudiante/iniciarPractica/DocumentosSubidos/",
+        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/DocumentosSubidos/",
         views.DocumentosSubidos,
-        name="list_files",
+        name="documentos_subidos",
     ),
     path("files/<int:file_id>/", views.view_file, name="view_file"),
 ]

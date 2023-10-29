@@ -87,16 +87,16 @@ class Perfiles(models.Model):
 class UploadedARLFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
 
 
 class UploadedEPSFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
 
 
 class UploadedLABORALFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    estudianteId = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
