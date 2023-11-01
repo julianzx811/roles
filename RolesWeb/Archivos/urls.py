@@ -33,6 +33,20 @@ urlpatterns = [
         name="vistaCoordinador",
     ),
     path(
+        "vistaOficinaPracticas/",
+        views.indexOficinaPracticas,
+        name="vistaOficinaPracticas",
+    ),
+    path(
+        "administrarSemestres",
+        views.administrarSemestres,
+        name="administrarSemestres"
+         ),
+    path("CrearSemestre/", views.CreateSemestre, name="CrearSemestre"),
+    path("UpdateSemestre/<int:id>/", views.UpdateSemestre, name="UpdateSemestre"),
+    path("DeleteSemestre/<int:id>/", views.DeleteSemestre, name="DeleteSemestre"),
+    path("asignarNuevoCoordinador/",views.asignarNuevoCoordinador, name="asignarNuevoCoordinador"),
+    path(
         "vistaDocenteMonitor/",
         views.indexDocenteMonitor,
         name="vistaDocenteMonitor",
@@ -71,4 +85,5 @@ urlpatterns = [
         name="documentos_subidos",
     ),
     path("files/<int:file_id>/", views.view_file, name="view_file"),
+    
 ]

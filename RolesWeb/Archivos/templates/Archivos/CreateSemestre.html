@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Creacion de semestre</title>
+</head>
+<body style="background-color: #283747; color: white;">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+
+                    <form action="{% url 'administrarSemestres' %}" method="post">
+                        {% csrf_token %}
+
+                        <h1>Nuevo Semestre</h1>
+
+                        <div class="mb-3">
+                            <label for="semestre" class="form-label">Semestre:</label>
+                            <input type="text" class="form-control" id="semestre" name="semestre" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fecha_fin" class="form-label">Fecha de Finalizacion:</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                        </div>
+
+                        
+
+                        <button type="submit" class="btn btn-custom type1">Submit</button>
+                    </form>
+                </div>
+
+                <a id="volverBtn" class="btn btn-custom type2" href="javascript:history.go(-1)"><i class="bi bi-arrow-90deg-left"></i>Volver</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .btn-custom.type1 {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            position: relative;
+            padding: 1em 1.5em;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-custom.type1::after,
+        .btn-custom.type1::before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            border: 2px solid green;
+            transition: all 0.6s ease;
+            border-radius: 2px;
+        }
+
+        .btn-custom.type1::after {
+            bottom: 0;
+            right: 0;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-bottom-color: green;
+            border-right-color: green;
+        }
+
+        .btn-custom.type1::before {
+            top: 0;
+            left: 0;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-top-color: green;
+            border-left-color: green;
+        }
+
+        .btn-custom.type1:hover::after,
+        .btn-custom.type1:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-custom.type1:hover {
+            color: green;
+        }
+
+        .btn-custom.type2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 1em;
+            z-index: 1000;
+        }
+
+        .btn-custom.type2:hover {
+            color: white;
+        }
+    </style>
+</body>
+</html>

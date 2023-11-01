@@ -7,9 +7,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
                     FileUploadLABORALForm, ProgramForm)
-from .models import (Aspirantes, Contrato, Estado_Practica, Estudiante,
+from .models import (Aspirantes, Contrato, Coordinador, Estado_Practica, Estudiante,
                      Perfiles, Plan_estudios, Programas, UploadedARLFile,
-                     UploadedEPSFile, UploadedLABORALFile, monitores)
+                     UploadedEPSFile, UploadedLABORALFile, monitores, Semestres)
 
 archivo_subido = True
 
@@ -20,25 +20,27 @@ def login(request):
     if request.method == "POST":
         login_fallo = False
         usuario_existe = False
-        codigo = request.POST["codigo"]
+        usuario = request.POST["usuario"]
         contrasena = request.POST["contrasena"]
         cargo = request.POST.get("cargoUsuario")
-        print(codigo, contrasena, cargo)
-        if Perfiles.objects.filter(codigo=codigo).exists():
+        print(usuario, contrasena, cargo)
+        if Perfiles.objects.filter(usuario=usuario).exists():
             if (
-                (Perfiles.objects.get(codigo=codigo).codigo == codigo)
-                and (Perfiles.objects.get(codigo=codigo).contrasena == contrasena)
-                and (Perfiles.objects.get(codigo=codigo).cargo == cargo)
+                (Perfiles.objects.get(usuario=usuario).usuario == usuario)
+                and (Perfiles.objects.get(usuario=usuario).contrasena == contrasena)
+                and (Perfiles.objects.get(usuario=usuario).cargo == cargo)
             ):
                 print("Login exitoso")
                 if cargo == "Estudiante":
-                    return redirect("/vistaEstudiante/" + str(codigo))
+                    return redirect("/vistaEstudiante/" + str(usuario))
                 elif cargo == "Docente Monitor":
                     return redirect(
                         "/vistaDocenteMonitor",
                     )
                 elif cargo == "Coordinador":
                     return redirect("/vistaCoordinador")
+                elif cargo == "Oficina de Practicas":
+                    return redirect("/vistaOficinaPracticas")
             else:
                 login_fallo = True
                 return render(
@@ -116,7 +118,7 @@ def CrearMonitor(request):
         print(form)
         if form.is_valid():
             if (
-                Perfiles.objects.filter(codigo=form.cleaned_data["codigo"]).exists()
+                Perfiles.objects.filter(usuario=form.cleaned_data["usuario"]).exists()
                 == False
             ):
                 Nombre = request.POST["nombre"]
@@ -134,7 +136,7 @@ def CrearMonitor(request):
                 )
                 monitor.save()
                 perfil = Perfiles(
-                    codigo=Codigo,
+                    usuario=Correo.split("@")[0],
                     contrasena=Codigo,
                     nombre=Nombre,
                     cargo="Docente Monitor",
@@ -172,6 +174,14 @@ def indexCoordinador(request):
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
+def indexOficinaPracticas(request):
+    existe = Estudiante.objects.exists()
+    return render(
+        request,
+        "Archivos/vistaOficinaPracticas.html",
+        {"archivo_subido": archivo_subido, "existe": existe},
+    )
+
 
 def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
@@ -195,6 +205,47 @@ def indexEstudiante(request, estudiante_id):
         },
     )
 
+def asignarNuevoCoordinador(request):
+    docentes = monitores.objects.filter()
+    creaMonitor = False
+    monitorExiste = False
+    if request.method == "GET":
+        return render(request, "Archivos/asignarNuevoCoordinador.html", {"docentes": docentes})
+    else:
+        creaMonitor = False
+        monitorExiste = False
+        coordinador = monitores.objects.filter(codigo=request.POST["docente"])
+        correo = coordinador[0].correo_institucional
+        if (
+            Coordinador.objects.filter(id_docente=correo).exists()
+            == False
+        ):
+            monitor = monitores.objects.filter(codigo=request.POST["docente"])[0]
+            coordinador = Coordinador(
+                id_docente= monitor
+            )
+            coordinador.save()
+            
+            perfil = Perfiles(
+                usuario=correo.split("@")[0],
+                contrasena=monitor.codigo,
+                nombre=monitor.nombre,
+                cargo="Coordinador",
+            )
+            perfil.save()
+            creaMonitor = True
+        else:
+            monitorExiste = True
+        return render(
+            request,
+            "Archivos/asignarNuevoCoordinador.html",
+            {
+                "archivo_subido": archivo_subido,
+                "creaMonitor": creaMonitor,
+                "monitorExiste": monitorExiste,
+                "docentes": docentes,
+            },
+        )
 
 def cargarArchivoEstudiantes(request):
     if request.method == "GET":
@@ -275,7 +326,7 @@ def cargarArchivoEstudiantes(request):
                     print("agregados", agregados)
                     est1.save()
                     perfil = Perfiles(
-                        codigo=datos[2],
+                        usuario=datos[3].split("@")[0],
                         contrasena=datos[2],
                         nombre=datos[6],
                         cargo="Estudiante",
@@ -574,3 +625,73 @@ def SubirDocumentoEPS(request, estudiante_id):
 
 def DocumentosSubidos(request, estudiante_id):
     return list_files(request, estudiante_id)
+
+def administrarSemestres(request):
+    semestres = Semestres.objects.all()
+    if request.method == "DELETE":
+        return render(request, "Archivos/administrarSemestre.html", {"semestres": semestres})
+    if request.method == "GET":
+        return render(request, "Archivos/administrarSemestre.html", {"semestres": semestres})
+    if request.method == "POST":
+        try:
+            semestre = request.POST["semestre"]
+            fecha_inicio = request.POST["fecha_inicio"]
+            fecha_fin = request.POST["fecha_fin"]
+            semestrito = Semestres(
+                nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
+            )
+            semestrito.save()
+            return render(
+                request,
+                "Archivos/administrarSemestres.html",
+                {
+                    "semestres": semestres,
+                },
+            )
+        except Exception as error:
+            print(error)
+            return render(
+                request,
+                "Archivos/administrarSemestre.html",
+                {"semestres": semestres},
+            )
+       
+
+
+def UpdateSemestre(request, id):
+    if request.method == "GET":
+        semestre = Semestres.objects.get(pk=id)
+        semestreobj = model_to_dict(semestre)
+        return render(
+            request,
+            "Archivos/UpdateSemestre.html",
+            {"semestre": semestreobj, "id": id},
+        )
+    elif request.method == "POST":
+        try:
+            print("entro2")
+            semestre = request.POST["semestre"]
+            fecha_inicio = request.POST["fecha_inicio"]
+            fecha_fin = request.POST["fecha_fin"]
+            Semestres.objects.filter(nombre=semestre).update(
+                nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
+            )
+            request.method = "GET"
+            return administrarSemestres(request)
+        except Exception as error:
+            print(error)
+            return administrarSemestres(request)
+
+
+def CreateSemestre(request):
+    return render(request, "Archivos/CreateSemestre.html")
+
+
+def DeleteSemestre(request, id):
+    semestre = Semestres.objects.get(pk=id)
+    try:
+        semestre.delete()
+        return administrarSemestres(request)
+    except Exception as error:
+        print(error)
+        return administrarSemestres(request)
