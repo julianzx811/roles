@@ -12,7 +12,7 @@ urlpatterns = [
         name="cargaEstudiantesDos",
     ),
     path(
-        "vistaCoordinador/AsignacionDocentesEstudiantes/",
+        "AsignacionDocentesEstudiantes/",
         views.AsignacionDocentesEstudiantes,
         name="AsignacionDocentesEstudiantes",
     ),
