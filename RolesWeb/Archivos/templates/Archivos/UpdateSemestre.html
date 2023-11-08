@@ -94,16 +94,26 @@
 
                         <div class="mb-3">
                             <label for="codigo" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ semestre.nombre }}" required>
+                            <input type="text" class="form-control" id="semestre" name="semestre" value="{{ semestre.nombre }}" required>
+                            <br>
+                            <label>Elige el año:</label>
+                            <input type="number" name="year" min="1900" max="2099" step="1" value="2023" id="year">
+                            <label>Selecciona el periodo:</label>
+
+                            <select id="semester" name="semester">
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                            </select><br>
+                            
                         </div>
 
                         <div class="mb-3">
-                            <label for "fecha_inicio" class="form-label">Fecha de Inicio:</label>
-                            <input type="text" class="form-control" id="programa" name="programa" value="{{ semestre.fecha_inicio }}" required>
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ semestre.fecha_inicio }}" required>
                         </div>
                         <div class="mb-3">
                             <label for "fecha_fin" class="form-label">Fecha de Finalizacion:</label>
-                            <input type="text" class="form-control" id="programa" name="programa" value="{{ semestre.fecha_fin }}" required>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ semestre.fecha_fin }}" required>
                         </div>
 
                     
@@ -123,5 +133,26 @@
             window.history.back();
         }
     </script>
+        <script>
+            // Obtenemos referencias a los elementos HTML
+            const yearInput = document.getElementById("year");
+            const semesterSelect = document.getElementById("semester");
+            const selectedInfoInput = document.getElementById("semestre");
+    
+            // Función para actualizar el campo de entrada
+            function updateSelectedInfo() {
+                const selectedYear = yearInput.value;
+                const selectedSemester = semesterSelect.value;
+                selectedInfoInput.value = `${selectedYear}-${selectedSemester}`;
+            }
+    
+            // Escuchamos los cambios en el año y el semestre
+            yearInput.addEventListener("input", updateSelectedInfo);
+            semesterSelect.addEventListener("change", updateSelectedInfo);
+    
+            // Actualizamos el campo de entrada inicialmente
+            updateSelectedInfo();
+        </script>
+    
 </body>
 </html>

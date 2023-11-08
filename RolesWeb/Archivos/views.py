@@ -640,6 +640,7 @@ def administrarSemestres(request):
             semestrito = Semestres(
                 nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
             )
+            print(semestrito)
             semestrito.save()
             return render(
                 request,
@@ -662,6 +663,13 @@ def UpdateSemestre(request, id):
     if request.method == "GET":
         semestre = Semestres.objects.get(pk=id)
         semestreobj = model_to_dict(semestre)
+         
+        # Formatea la fecha en el formato "AAAA-MM-DD"
+        fecha_inicio_formateada = semestreobj['fecha_inicio'].strftime("%Y-%m-%d")
+        semestreobj['fecha_inicio'] = fecha_inicio_formateada
+        fecha_fin_formateada = semestreobj['fecha_fin'].strftime("%Y-%m-%d")
+        semestreobj['fecha_fin'] = fecha_fin_formateada
+        
         return render(
             request,
             "Archivos/UpdateSemestre.html",
@@ -669,17 +677,17 @@ def UpdateSemestre(request, id):
         )
     elif request.method == "POST":
         try:
-            print("entro2")
+            
             semestre = request.POST["semestre"]
             fecha_inicio = request.POST["fecha_inicio"]
             fecha_fin = request.POST["fecha_fin"]
-            Semestres.objects.filter(nombre=semestre).update(
+            aux = Semestres.objects.filter(id=id).update(
                 nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
-            )
+            ) 
             request.method = "GET"
             return administrarSemestres(request)
         except Exception as error:
-            print(error)
+            print("eror: ",error)
             return administrarSemestres(request)
 
 
