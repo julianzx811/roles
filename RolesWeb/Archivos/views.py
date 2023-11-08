@@ -7,9 +7,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
                     FileUploadLABORALForm, ProgramForm)
-from .models import (Aspirantes, Contrato, Coordinador, Estado_Practica, Estudiante,
-                     Perfiles, Plan_estudios, Programas, UploadedARLFile,
-                     UploadedEPSFile, UploadedLABORALFile, monitores, Semestres)
+from .models import (Aspirantes, Contrato, Coordinador, Estado_Practica,
+                     Estudiante, Perfiles, Plan_estudios, Programas, Semestres,
+                     UploadedARLFile, UploadedEPSFile, UploadedLABORALFile,
+                     monitores)
 
 archivo_subido = True
 
@@ -174,6 +175,7 @@ def indexCoordinador(request):
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
+
 def indexOficinaPracticas(request):
     existe = Estudiante.objects.exists()
     return render(
@@ -205,27 +207,25 @@ def indexEstudiante(request, estudiante_id):
         },
     )
 
+
 def asignarNuevoCoordinador(request):
     docentes = monitores.objects.filter()
     creaMonitor = False
     monitorExiste = False
     if request.method == "GET":
-        return render(request, "Archivos/asignarNuevoCoordinador.html", {"docentes": docentes})
+        return render(
+            request, "Archivos/asignarNuevoCoordinador.html", {"docentes": docentes}
+        )
     else:
         creaMonitor = False
         monitorExiste = False
         coordinador = monitores.objects.filter(codigo=request.POST["docente"])
         correo = coordinador[0].correo_institucional
-        if (
-            Coordinador.objects.filter(id_docente=correo).exists()
-            == False
-        ):
+        if Coordinador.objects.filter(id_docente=correo).exists() == False:
             monitor = monitores.objects.filter(codigo=request.POST["docente"])[0]
-            coordinador = Coordinador(
-                id_docente= monitor
-            )
+            coordinador = Coordinador(id_docente=monitor)
             coordinador.save()
-            
+
             perfil = Perfiles(
                 usuario=correo.split("@")[0],
                 contrasena=monitor.codigo,
@@ -246,6 +246,7 @@ def asignarNuevoCoordinador(request):
                 "docentes": docentes,
             },
         )
+
 
 def cargarArchivoEstudiantes(request):
     if request.method == "GET":
@@ -592,14 +593,26 @@ def iniciar_practicas(request, estudiante_id):
 
 def upload_file(request, stringhtml, formxd, estudiante_id):
     perfil = Perfiles.objects.get(pk=estudiante_id)
+    print(perfil)
     if request.method == "POST":
         form = formxd(request.POST, request.FILES)
         if form.is_valid():
-            # Create an instance of UploadedLABORALFile and set the estudianteId
-            uploaded_file = form.save(commit=False)
-            uploaded_file.estudianteId = perfil  # Associate with the profile
-            uploaded_file.save()  # Save the instance with the profile association
-            return redirect("../")
+            file = UploadedLABORALFile.objects.filter(estudianteId=perfil)
+            if file.exists():
+                existing_file = (
+                    file.first()
+                )  # Assuming there's only one file per student
+                form = formxd(request.POST, request.FILES, instance=existing_file)
+                if form.is_valid():
+                    # Update the existing file with the new data
+                    form.save()
+                    return redirect("../")
+
+            else:
+                uploaded_file = form.save(commit=False)
+                uploaded_file.estudianteId = perfil
+                uploaded_file.save()
+                return redirect("../")
     else:
         form = formxd()
     return render(request, str(stringhtml), {"form": form})
@@ -626,12 +639,17 @@ def SubirDocumentoEPS(request, estudiante_id):
 def DocumentosSubidos(request, estudiante_id):
     return list_files(request, estudiante_id)
 
+
 def administrarSemestres(request):
     semestres = Semestres.objects.all()
     if request.method == "DELETE":
-        return render(request, "Archivos/administrarSemestre.html", {"semestres": semestres})
+        return render(
+            request, "Archivos/administrarSemestre.html", {"semestres": semestres}
+        )
     if request.method == "GET":
-        return render(request, "Archivos/administrarSemestre.html", {"semestres": semestres})
+        return render(
+            request, "Archivos/administrarSemestre.html", {"semestres": semestres}
+        )
     if request.method == "POST":
         try:
             semestre = request.POST["semestre"]
@@ -655,7 +673,6 @@ def administrarSemestres(request):
                 "Archivos/administrarSemestre.html",
                 {"semestres": semestres},
             )
-       
 
 
 def UpdateSemestre(request, id):
