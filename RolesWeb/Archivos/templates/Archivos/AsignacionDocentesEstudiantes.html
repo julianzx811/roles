@@ -103,11 +103,8 @@
                         
                                     {% if mostrar is not None %}
                                     <p>{{mostrar}}</p>
-                                    {% for docente in docentes %}
-                                    <p>{{docente.nombre}}
-                                    </p>
-                                    {% endfor %} {% for estudiante in estudiantes %}
-                                    <p>{{estudiante.nombre}} {{estudiante.apellidos}} {{estudiante.docente_asignado_id}}
+                                     {% for estudiante in estudiantes %}
+                                    <p>{{estudiante.nombre}} {{estudiante.docente_asignado_id}}
                                     </p>
                                     {% endfor %}
                                     <button class="btn btn-custom type1" type="submit" value="Upload" id="asignarPermanentemente">Confirmar</button> {% else %}

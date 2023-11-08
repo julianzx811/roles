@@ -40,8 +40,12 @@ def login(request):
                     )
                 elif cargo == "Coordinador":
                     return redirect("/vistaCoordinador")
-                elif cargo == "Oficina de Practicas":
-                    return redirect("/vistaOficinaPracticas")
+                elif cargo == "Lider Oficina de Practicas":
+                    return redirect("/vistaLiderOficinaPracticas")
+                elif cargo == "Auxiliar Oficina de Practicas":
+                    return redirect("/vistaAuxiliarOficinaPracticas")
+                elif cargo == "Administrador":
+                    return redirect("/vistaAdministrador")
             else:
                 login_fallo = True
                 return render(
@@ -116,10 +120,11 @@ def CrearMonitor(request):
         creaMonitor = False
         monitorExiste = False
         form = DatosForm(request.POST)
-        print(form)
+        usuario = request.POST["correo"].split("@")[0]
+        print(usuario)
         if form.is_valid():
             if (
-                Perfiles.objects.filter(usuario=form.cleaned_data["usuario"]).exists()
+                Perfiles.objects.filter(usuario=usuario).exists()
                 == False
             ):
                 Nombre = request.POST["nombre"]
@@ -204,6 +209,17 @@ def indexEstudiante(request, estudiante_id):
             "archivo_subido": archivo_subido,
             "existe": existe,
             "estudiante_id": estudiante_id,
+        },
+    )
+
+def indexAdministrador(request):
+    existe = Estudiante.objects.exists()
+    return render(
+        request,
+        "Archivos/vistaAdministrador.html",
+        {
+            "archivo_subido": archivo_subido,
+            "existe": existe,
         },
     )
 
