@@ -1,2 +1,4 @@
+*.pyc
+
 RolesWeb\Archivos\__pycache__\
 RolesWeb/Archivos/__pycache__/__init__.cpython-310.pyc
