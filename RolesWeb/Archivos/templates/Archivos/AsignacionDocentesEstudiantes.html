@@ -100,7 +100,21 @@
                             </div>
                             <button class="btn btn-custom type1" type="submit" id="asignarTemporalmente" value="Upload">Asignar automaticamente</button>
                         </div>
+                        <!--<div class="mb-3">
+                            <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
+                            <select class="form-select" id="file_type" name="file_type" style="border: 1px solid white; padding: 5px;" required>
+                                <option value="" selected disabled>Selecciona un periodo lectivo</option>
+                                {% for semestre in semestre %}
+                                    <option value="{{ semestre.id }}" color: #FFFFFF;>{{ semestre.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                            <div class="invalid-feedback">
+                                Por favor seleccione un periodo lectivo
+                            </div>
                         
+                            <button class="btn btn-custom type1" type="submit" id="asignarTemporalmente" value="Upload">Asignar automaticamente</button>
+                        </div>-->
                                     {% if mostrar is not None %}
                                     <p>{{mostrar}}</p>
                                      {% for estudiante in estudiantes %}

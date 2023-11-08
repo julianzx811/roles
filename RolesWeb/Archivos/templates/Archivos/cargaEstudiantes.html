@@ -100,13 +100,18 @@
                         <p></p>
                         <div class="mb-3">
                             <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
-                            <select class="form-select" id="file_type" name="file_type" style="border: 1px solid white; padding: 5px;" required disabled>
-                                <option value="2023-2" selected>2024-1</option>
+                            <select class="form-select" id="file_type" name="file_type" style="border: 1px solid white; padding: 5px;" required>
+                                <option value="" selected disabled>Selecciona un periodo lectivo</option>
+                                {% for semestre in semestre %}
+                                    <option value="{{ semestre.id }}" color: #FFFFFF;>{{ semestre.nombre }}</option>
+                                {% endfor %}
                             </select>
+                            
                             <div class="invalid-feedback">
                                 Por favor seleccione un periodo lectivo
                             </div>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="file_upload" class="form-label">Subir Archivo</label>
                             <input class="form-control" type="file" id="file_upload"

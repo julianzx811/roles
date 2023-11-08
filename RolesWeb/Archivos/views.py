@@ -65,9 +65,10 @@ def login(request):
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
+        semestre = Semestres.objects.all()
         mostrar = None
         return render(
-            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar}
+            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar, "semestre": semestre}
         )
     elif request.method == "POST":
         mostrar = None
@@ -266,14 +267,15 @@ def asignarNuevoCoordinador(request):
 
 def cargarArchivoEstudiantes(request):
     if request.method == "GET":
-        return render(request, "Archivos/cargaEstudiantes.html", {})
+        semestre = Semestres.objects.all()
+        return render(request, "Archivos/cargaEstudiantes.html", {"semestre": semestre})
     else:
         try:
             actualizados = 0
             agregados = 0
             excel_file = request.FILES["excel_file"]
             periodo = request.POST.get("file_type")
-
+            semestre_seleccionado = Semestres.objects.get(id=periodo)
             wb = openpyxl.load_workbook(excel_file)
             worksheet = wb["Sheet1"]
 
@@ -337,7 +339,7 @@ def cargarArchivoEstudiantes(request):
                         email_personal=datos[4],
                         telefono=datos[5],
                         nombre=datos[6],
-                        periodo_lectivo="2023-2",
+                        periodo_lectivo=semestre_seleccionado.nombre,
                     )
                     agregados += 1
                     print("agregados", agregados)
@@ -369,14 +371,14 @@ def cargarArchivoEstudiantes(request):
 def cargarArchivoEstudiantesDos(request):
     existe = Estudiante.objects.exists()
     if request.method == "GET":
-        return render(request, "Archivos/CargaEstudiantesDos.html", {})
+        semestre = Semestres.objects.all()
+        return render(request, "Archivos/CargaEstudiantesDos.html", {"semestre": semestre})
     else:
         try:
             actualizados = 0
             excel_file = request.FILES["excel_file"]
             wb = openpyxl.load_workbook(excel_file)
             worksheet = wb["ING SISTEMAS 2023 2"]
-
             excel_data = []
 
             for row in worksheet.iter_rows(min_row=4, max_col=28):
@@ -444,7 +446,7 @@ def cargarArchivoEstudiantesDos(request):
                             periodo_aplazado = periodo_aplazado[:-1]
                             estudiante.periodo_lectivo = periodo_aplazado
                             print(
-                                "Peridodo despues de aplaza: "
+                                "Periodo despues de aplazar: "
                                 + row[1].split("Aplaza ")[1]
                             )
                         elif row[1] == "NO APROBADO":
