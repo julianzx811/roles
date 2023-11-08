@@ -12,10 +12,8 @@ class Programas(models.Model):
 
 class Semestres(models.Model):
     nombre = models.CharField(default="", max_length=255, null=False)
-    fecha_inicio = models.DateTimeField(default="", max_length=255, null=False)
-    fecha_fin = models.DateTimeField(default="", max_length=255, null=False)
-
-
+    fecha_inicio = models.DateField(default="", max_length=255, null=False)
+    fecha_fin = models.DateField(default="", max_length=255, null=False)
 
 class monitores(models.Model):
     nombre = models.CharField(max_length=255, null=False)

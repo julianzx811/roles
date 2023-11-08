@@ -12,7 +12,7 @@ urlpatterns = [
         name="cargaEstudiantesDos",
     ),
     path(
-        "vistaCoordinador/AsignacionDocentesEstudiantes/",
+        "AsignacionDocentesEstudiantes/",
         views.AsignacionDocentesEstudiantes,
         name="AsignacionDocentesEstudiantes",
     ),
@@ -36,6 +36,11 @@ urlpatterns = [
         "vistaOficinaPracticas/",
         views.indexOficinaPracticas,
         name="vistaOficinaPracticas",
+    ),
+    path(
+        "vistaAdministrador/",
+        views.indexAdministrador,
+        name="vistaAdministrador",
     ),
     path(
         "administrarSemestres", views.administrarSemestres, name="administrarSemestres"
