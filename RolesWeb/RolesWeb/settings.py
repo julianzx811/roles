@@ -79,13 +79,13 @@ WSGI_APPLICATION = "RolesWeb.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'practicas',
-        'USER': 'postgres',
-        'PASSWORD': '24713592',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "practicas",
+        "USER": "postgres",
+        "PASSWORD": "7878",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
