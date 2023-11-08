@@ -1,5 +1,20 @@
+<h1>documento ARL</h1>
 <ul>
-    {% for file in files %}
+    {% for file in files1 %}
+        <li><a href="{% url 'view_file' file.id %}">{{ file.file.name }}</a></li>
+    {% endfor %}
+</ul>
+
+<h1>documento EPS</h1>
+<ul>
+    {% for file in files2 %}
+        <li><a href="{% url 'view_file' file.id %}">{{ file.file.name }}</a></li>
+    {% endfor %}
+</ul>
+
+<h1>documento laboral </h1>
+<ul>
+    {% for file in files3 %}
         <li><a href="{% url 'view_file' file.id %}">{{ file.file.name }}</a></li>
     {% endfor %}
 </ul>

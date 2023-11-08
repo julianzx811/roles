@@ -10,6 +10,12 @@ class Programas(models.Model):
     programa = models.CharField(default="sin programa", max_length=255, null=False)
     facultad = models.CharField(default="sin facultad", max_length=255, null=False)
 
+class Semestres(models.Model):
+    nombre = models.CharField(default="", max_length=255, null=False)
+    fecha_inicio = models.DateTimeField(default="", max_length=255, null=False)
+    fecha_fin = models.DateTimeField(default="", max_length=255, null=False)
+
+
 
 class monitores(models.Model):
     nombre = models.CharField(max_length=255, null=False)
@@ -20,6 +26,7 @@ class monitores(models.Model):
     horas_disponibles = models.IntegerField()
     programa = models.ForeignKey(Programas, on_delete=models.CASCADE)
     estado = models.BooleanField(default=1)
+
 
 class Estudiante(models.Model):
     codigo = models.CharField(primary_key=True, max_length=255, null=False)
@@ -36,11 +43,8 @@ class Estudiante(models.Model):
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
     docente_asignado = models.ForeignKey(
-        monitores,
-        on_delete=models.CASCADE,
-        null=True, 
-        default=None
-        )
+        monitores, on_delete=models.CASCADE, null=True, default=None
+    )
 
 
 class Aspirantes(models.Model):
@@ -81,11 +85,26 @@ class Estado_Practica(models.Model):
 
 class Perfiles(models.Model):
     contrasena = models.CharField(max_length=255, null=False)
-    codigo = models.CharField(primary_key=True, max_length=255, null=False, default="1")
+    usuario = models.CharField(primary_key=True, max_length=255, null=False, default="")
     nombre = models.CharField(max_length=255, null=False)
     cargo = models.CharField(max_length=255, null=False)
 
+class Coordinador(models.Model):
+    id_docente = models.ForeignKey(monitores, on_delete=models.CASCADE)
 
-class UploadedFile(models.Model):
+class UploadedARLFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
+
+
+class UploadedEPSFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
+
+
+class UploadedLABORALFile(models.Model):
+    file = models.FileField(upload_to="uploads/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)

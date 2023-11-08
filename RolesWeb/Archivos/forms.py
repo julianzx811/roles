@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import UploadedFile
+from .models import UploadedARLFile, UploadedEPSFile, UploadedLABORALFile
 
 
 class DatosForm(forms.Form):
@@ -17,7 +17,19 @@ class ProgramForm(forms.Form):
     facultad = forms.CharField(max_length=100)
 
 
-class FileUploadForm(forms.ModelForm):
+class FileUploadARLForm(forms.ModelForm):
     class Meta:
-        model = UploadedFile
+        model = UploadedARLFile
+        fields = ["file"]
+
+
+class FileUploadEPSForm(forms.ModelForm):
+    class Meta:
+        model = UploadedEPSFile
+        fields = ["file"]
+
+
+class FileUploadLABORALForm(forms.ModelForm):
+    class Meta:
+        model = UploadedLABORALFile
         fields = ["file"]
