@@ -12,7 +12,7 @@ urlpatterns = [
         name="cargaEstudiantesDos",
     ),
     path(
-        "vistaCoordinador/AsignacionDocentesEstudiantes/",
+        "AsignacionDocentesEstudiantes/",
         views.AsignacionDocentesEstudiantes,
         name="AsignacionDocentesEstudiantes",
     ),
@@ -38,21 +38,28 @@ urlpatterns = [
         name="vistaOficinaPracticas",
     ),
     path(
-        "administrarSemestres",
-        views.administrarSemestres,
-        name="administrarSemestres"
-         ),
+        "vistaAdministrador/",
+        views.indexAdministrador,
+        name="vistaAdministrador",
+    ),
+    path(
+        "administrarSemestres", views.administrarSemestres, name="administrarSemestres"
+    ),
     path("CrearSemestre/", views.CreateSemestre, name="CrearSemestre"),
     path("UpdateSemestre/<int:id>/", views.UpdateSemestre, name="UpdateSemestre"),
     path("DeleteSemestre/<int:id>/", views.DeleteSemestre, name="DeleteSemestre"),
-    path("asignarNuevoCoordinador/",views.asignarNuevoCoordinador, name="asignarNuevoCoordinador"),
+    path(
+        "asignarNuevoCoordinador/",
+        views.asignarNuevoCoordinador,
+        name="asignarNuevoCoordinador",
+    ),
     path(
         "vistaDocenteMonitor/",
         views.indexDocenteMonitor,
         name="vistaDocenteMonitor",
     ),
     path(
-        "vistaEstudiante/<int:estudiante_id>/",
+        "vistaEstudiante/<str:estudiante_id>/",
         views.indexEstudiante,
         name="vistaEstudiante",
     ),
@@ -60,30 +67,29 @@ urlpatterns = [
     path("files/<int:estudiante_id>/", views.list_files, name="list_files"),
     path("view_file/", views.view_file, name="view_file"),
     path(
-        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/",
+        "vistaEstudiante/<str:estudiante_id>/iniciarPractica/",
         views.iniciar_practicas,
         name="iniciarpractiquica",
     ),
     path(
-        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirContranoLaboral/",
+        "vistaEstudiante/<str:estudiante_id>/iniciarPractica/SubirContranoLaboral/",
         views.SubirContranoLaboral,
         name="subir_contrano_laboral",
     ),
     path(
-        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirAfiliacionARL/",
+        "vistaEstudiante/<str:estudiante_id>/iniciarPractica/SubirAfiliacionARL/",
         views.SubirAfiliacionARL,
         name="subir_afiliacion_arl",
     ),
     path(
-        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/SubirDocumentoEPS/",
+        "vistaEstudiante/<str:estudiante_id>/iniciarPractica/SubirDocumentoEPS/",
         views.SubirDocumentoEPS,
         name="subir_documento_eps",
     ),
     path(
-        "vistaEstudiante/<int:estudiante_id>/iniciarPractica/DocumentosSubidos/",
+        "vistaEstudiante/<str:estudiante_id>/iniciarPractica/DocumentosSubidos/",
         views.DocumentosSubidos,
         name="documentos_subidos",
     ),
     path("files/<int:file_id>/", views.view_file, name="view_file"),
-    
 ]
