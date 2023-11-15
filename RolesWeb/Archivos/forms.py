@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import UploadedARLFile, UploadedEPSFile, UploadedLABORALFile
+from .models import UploadedARLFile, UploadedEPSFile, UploadedLABORALFile, Semestres, Estudiante
 
 
 class DatosForm(forms.Form):

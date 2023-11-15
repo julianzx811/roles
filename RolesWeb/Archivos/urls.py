@@ -38,9 +38,24 @@ urlpatterns = [
         name="vistaOficinaPracticas",
     ),
     path(
+        "vistaAuxiliarOficinaPracticas/",
+        views.indexAuxiliarOficinaPracticas,
+        name="vistaAuxiliarOficinaPracticas",
+    ),
+    path(
         "vistaAdministrador/",
         views.indexAdministrador,
         name="vistaAdministrador",
+    ),
+    path(
+        "agregarNuevoLider/",
+        views.agregarNuevoLider,
+        name="agregarNuevoLider",
+    ),
+    path(
+        "agregarNuevoAuxiliar/",
+        views.agregarNuevoAuxiliar,
+        name="agregarNuevoAuxiliar",
     ),
     path(
         "administrarSemestres", views.administrarSemestres, name="administrarSemestres"
