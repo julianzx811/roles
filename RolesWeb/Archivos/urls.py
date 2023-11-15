@@ -33,7 +33,7 @@ urlpatterns = [
         name="vistaCoordinador",
     ),
     path(
-        "vistaOficinaPracticas/",
+        "vistaLiderOficinaPracticas/",
         views.indexOficinaPracticas,
         name="vistaOficinaPracticas",
     ),
