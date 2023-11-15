@@ -126,6 +126,9 @@
                   </form>
                   <p></p>
                   <hr>
+                  {% if semestre_no_existe %}
+                      <p>Aun no hay estudiantes pertenecientes a este semestre, debes cargar el archivo de matriculados primero en la pestaña "Subir listado Estudiantes"</p>
+                  {% endif %}
                   {% if excel_data %}
                   <div class="alert_exito">
                     {% if excel_data %}
@@ -152,6 +155,7 @@
                       <span class="closebtn" onclick="this.parentElement.style.display='none';">×</span> 
                       Hubo un error al subir el archivo
                     </div>
+                    
                   {% else %}
                   {% endif %}
                 </div>
