@@ -38,6 +38,11 @@ urlpatterns = [
         name="vistaOficinaPracticas",
     ),
     path(
+        "vistaAdministrador/",
+        views.indexAdministrador,
+        name="vistaAdministrador",
+    ),
+    path(
         "administrarSemestres", views.administrarSemestres, name="administrarSemestres"
     ),
     path("CrearSemestre/", views.CreateSemestre, name="CrearSemestre"),
