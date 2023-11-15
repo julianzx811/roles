@@ -90,10 +90,9 @@
                         <div class="mb-3">
                             <label for="file_type" class="form-label">Selecciona Periodo Lectivo</label>
                             <select class="form-select" id="periodo_lectivo" name="periodo_lectivo" style="border: 1px solid white; padding: 5px;" required>
-                              <option value="2023-2">2023-2</option>
-                              <option value="2024 1" selected>2024-1</option>
-                              <option value="2024 2">2024-2</option>
-                              <option value="2025 1">2025-1</option>
+                              {% for semestre in semestres %}
+                                <option value={{semestre.nombre}}>{{semestre.nombre}}</option>
+                              {% endfor %}
                           </select>
                             <div class="invalid-feedback">
                                 Por favor seleccione un periodo lectivo
@@ -116,13 +115,8 @@
                             <button class="btn btn-custom type1" type="submit" id="asignarTemporalmente" value="Upload">Asignar automaticamente</button>
                         </div>-->
                                     {% if mostrar is not None %}
-                                    <p>{{mostrar}}</p>
-                                     {% for estudiante in estudiantes %}
-                                    <p>{{estudiante.nombre}} {{estudiante.docente_asignado_id}}
-                                    </p>
-                                    {% endfor %}
-                                    <button class="btn btn-custom type1" type="submit" value="Upload" id="asignarPermanentemente">Confirmar</button> {% else %}
-                                    <p>Cuando no hay seleccionado nada</p>
+                                    <p>Asignación automatica realizada con exito</p>
+                                     
                                     {% endif %}
                                 </div>
                                 

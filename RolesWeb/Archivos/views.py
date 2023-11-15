@@ -32,7 +32,7 @@ def login(request):
                 and (Perfiles.objects.get(usuario=usuario).cargo == cargo)
             ):
                 print("Login exitoso")
-                if cargo == "Estudiante":
+                if cargo == "Practicante":
                     return redirect("/vistaEstudiante/" + str(usuario))
                 elif cargo == "Docente Monitor":
                     return redirect(
@@ -65,10 +65,11 @@ def login(request):
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
-        semestre = Semestres.objects.all()
+        semestres = Semestres.objects.all()
         mostrar = None
+        print(semestres)
         return render(
-            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar, "semestre": semestre}
+            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar, "semestres": semestres}
         )
     elif request.method == "POST":
         mostrar = None
