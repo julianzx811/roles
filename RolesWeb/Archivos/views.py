@@ -185,7 +185,7 @@ def indexOficinaPracticas(request):
     existe = Estudiante.objects.exists()
     return render(
         request,
-        "Archivos/vistaOficinaPracticas.html",
+        "Archivos/vistaLiderOficinaPracticas.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
