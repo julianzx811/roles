@@ -23,7 +23,7 @@ def login(request):
         usuario_existe = False
         usuario = request.POST["usuario"]
         contrasena = request.POST["contrasena"]
-        cargo = request.POST.get("cargoUsuario")
+        cargo = request.POST["cargoUsuario"]
         print(usuario, contrasena, cargo)
         if Perfiles.objects.filter(usuario=usuario).exists():
             if (
@@ -69,7 +69,9 @@ def AsignacionDocentesEstudiantes(request):
         mostrar = None
         print(semestres)
         return render(
-            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar, "semestres": semestres}
+            request,
+            "Archivos/asignacionDocentesEstudiantes.html",
+            {"mostrar": mostrar, "semestres": semestres},
         )
     elif request.method == "POST":
         mostrar = None
@@ -125,10 +127,7 @@ def CrearMonitor(request):
         usuario = request.POST["correo"].split("@")[0]
         print(usuario)
         if form.is_valid():
-            if (
-                Perfiles.objects.filter(usuario=usuario).exists()
-                == False
-            ):
+            if Perfiles.objects.filter(usuario=usuario).exists() == False:
                 Nombre = request.POST["nombre"]
                 Codigo = request.POST["codigo"]
                 Correo = request.POST["correo"]
@@ -191,6 +190,7 @@ def indexOficinaPracticas(request):
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
+
 def indexAuxiliarOficinaPracticas(request):
     existe = Estudiante.objects.exists()
     return render(
@@ -198,6 +198,7 @@ def indexAuxiliarOficinaPracticas(request):
         "Archivos/vistaAuxiliarOficinaPracticas.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
+
 
 def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
@@ -221,6 +222,7 @@ def indexEstudiante(request, estudiante_id):
         },
     )
 
+
 def indexAdministrador(request):
     existe = Estudiante.objects.exists()
     return render(
@@ -239,13 +241,10 @@ def agregarNuevoLider(request):
     else:
         creaLiderOficina = False
         liderExiste = False
-        
+
         usuario = request.POST["correo"].split("@")[0]
-       
-        if (
-            Perfiles.objects.filter(usuario=usuario).exists()
-            == False
-        ):
+
+        if Perfiles.objects.filter(usuario=usuario).exists() == False:
             Nombre = request.POST["nombre"]
             Codigo = request.POST["codigo"]
             Correo = request.POST["correo"]
@@ -261,12 +260,10 @@ def agregarNuevoLider(request):
             liderExiste = True
         return render(
             request,
-             "Archivos/CrearLiderOficina.html",
-            {
-                "creaLiderOficina": creaLiderOficina,
-                "liderExiste": liderExiste
-            },
+            "Archivos/CrearLiderOficina.html",
+            {"creaLiderOficina": creaLiderOficina, "liderExiste": liderExiste},
         )
+
 
 def agregarNuevoAuxiliar(request):
     if request.method == "GET":
@@ -274,13 +271,10 @@ def agregarNuevoAuxiliar(request):
     else:
         creaAuxiliarOficina = False
         auxiliarExiste = False
-        
+
         usuario = request.POST["correo"].split("@")[0]
-       
-        if (
-            Perfiles.objects.filter(usuario=usuario).exists()
-            == False
-        ):
+
+        if Perfiles.objects.filter(usuario=usuario).exists() == False:
             Nombre = request.POST["nombre"]
             Codigo = request.POST["codigo"]
             Correo = request.POST["correo"]
@@ -296,12 +290,13 @@ def agregarNuevoAuxiliar(request):
             auxiliarExiste = True
         return render(
             request,
-             "Archivos/CrearAuxiliarOficina.html",
+            "Archivos/CrearAuxiliarOficina.html",
             {
                 "creaAuxiliarOficina": creaAuxiliarOficina,
-                "auxiliarExiste": auxiliarExiste
+                "auxiliarExiste": auxiliarExiste,
             },
         )
+
 
 def asignarNuevoCoordinador(request):
     docentes = monitores.objects.filter()
@@ -451,19 +446,34 @@ def cargarArchivoEstudiantesDos(request):
     semestre_no_existe = False
     if request.method == "GET":
         semestre = Semestres.objects.all()
-        return render(request, "Archivos/CargaEstudiantesDos.html", {"semestre": semestre})
+        return render(
+            request, "Archivos/CargaEstudiantesDos.html", {"semestre": semestre}
+        )
     else:
         try:
             periodo = request.POST.get("file_type")
             semestre_seleccionado = Semestres.objects.get(id=periodo)
-            print(len(Estudiante.objects.filter(periodo_lectivo=semestre_seleccionado.nombre)))
-            if len(Estudiante.objects.filter(periodo_lectivo=semestre_seleccionado.nombre)) != 0:
+            print(
+                len(
+                    Estudiante.objects.filter(
+                        periodo_lectivo=semestre_seleccionado.nombre
+                    )
+                )
+            )
+            if (
+                len(
+                    Estudiante.objects.filter(
+                        periodo_lectivo=semestre_seleccionado.nombre
+                    )
+                )
+                != 0
+            ):
                 actualizados = 0
                 excel_file = request.FILES["excel_file"]
                 wb = openpyxl.load_workbook(excel_file)
                 worksheet = wb["ING SISTEMAS 2023 2"]
                 excel_data = []
-                
+
                 for row in worksheet.iter_rows(min_row=4, max_col=28):
                     row_data = []
                     for cell in row:
@@ -553,7 +563,9 @@ def cargarArchivoEstudiantesDos(request):
                             # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                             estado_practica = Estado_Practica(
                                 codigo_estudiante=estudiante,
-                                practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[18],
+                                practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[
+                                    18
+                                ],
                                 estado_ubicación=row[19],
                                 comentarios=row[20],
                                 item=aspirantes,
@@ -571,14 +583,12 @@ def cargarArchivoEstudiantesDos(request):
                                 },
                             )
             else:
-              semestre_no_existe = True
-              return render(
-                request,
-                "Archivos/CargaEstudiantesDos.html",
-                {
-                    "semestre_no_existe": semestre_no_existe
-                },
-            )  
+                semestre_no_existe = True
+                return render(
+                    request,
+                    "Archivos/CargaEstudiantesDos.html",
+                    {"semestre_no_existe": semestre_no_existe},
+                )
             return render(
                 request,
                 "Archivos/CargaEstudiantesDos.html",
