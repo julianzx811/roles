@@ -90,6 +90,7 @@ class Perfiles(models.Model):
     usuario = models.CharField(primary_key=True, max_length=255, null=False, default="")
     nombre = models.CharField(max_length=255, null=False)
     cargo = models.CharField(max_length=255, null=False)
+    correo = models.EmailField(max_length=255, null=False, default='')
 
 class Coordinador(models.Model):
     id_docente = models.ForeignKey(monitores, on_delete=models.CASCADE)

@@ -5,6 +5,9 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("login/", views.login, name="login"),
+    path("olvideContrasena/", views.recuperarContrasena, name="olvideContrasena"),
+    path("ingresarNumeroVerificacion/<str:usuario>/sajdflkjdkfjslkfjsjknkjshdfjknsjklfjkjsdhakhflkehurwheurhweirufiuwhfjhsdjkvbsdbfjksndjfkasjklfjkslhfkh/<str:numeroVerificacion>", views.verificarNumero, name="ingresarNumeroVerificacion"),
+    path("ingresarNuevaContrasena/<str:usuario>", views.ingresarNuevaContrasena, name="ingresarNuevaContrasena"),
     path("cargaEstudiantes/", views.cargarArchivoEstudiantes, name="cargaEstudiantes"),
     path(
         "cargaEstudiantesDos/",
