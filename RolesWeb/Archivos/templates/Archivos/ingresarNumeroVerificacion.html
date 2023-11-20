@@ -26,15 +26,6 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); 
         }
 
-        .btn-custom.type2 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 1em;
-            z-index: 1000; 
-
-        }
-
         .btn-custom {
             position: relative;
             padding: 1em 1.5em;
@@ -92,7 +83,7 @@
 <body>
     <div class="container text-center">
         <!-- <div class="display-6">Inicio</div> -->
-        <div class="display-4">Login</div>
+        <div class="display-4">Autenticación</div>
         <p></p>
         <div class="container my-5">
             <div class="row justify-content-center">
@@ -100,38 +91,22 @@
                 <div class="form-container">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <p></p>
+
+                        <p>A continuación, se envió un numero de verificación al correo electronico asociado a la cuenta, en el siguiente campo ingresa el numero</p>
 
                         <div class="mb-3">
-                            <label for="usuario" class="form-label">Usuario:</label>
-                            <input class="form-control" type="text" id="usuario" name="usuario" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contrasena" class="form-label">Contraseña:</label>
-                            <input class="form-control" type="password" id="contrasena" name="contrasena" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="file_type" class="form-label">Cargo</label>
-                            <select class="form-select" id="cargoUsuario" name="cargoUsuario" style="border: 1px solid white; padding: 5px;" required>
-                                <option value="Practicante" selected>Practicante</option>
-                                <option value="Docente Monitor" selected>Docente Monitor</option>
-                                <option value="Coordinador" selected>Coordinador de Practicas</option>
-                                <option value="Lider Oficina de Practicas" selected>Lider Oficina de Practicas</option>
-                                <option value="Auxiliar Oficina de Practicas" selected>Auxiliar Oficina de Practicas</option>
-                                <option value="Administrador" selected>Administrador</option>
-                            </select>
+                            <label for="numeroVerificacionIngresado" class="form-label">Ingresa numero:</label>
+                            <input class="form-control" type="number" id="numeroVerificacionIngresado" name="numeroVerificacionIngresado" min=0, max=999999 required>
                         </div>
                         <p>
-                        {% if login_fallo %}
-                            <p>Algo salió mal con el inicio de sesion</p>
+                        {% if autenticacion_fallo %}
+                            <p>El numero es incorrecto</p>
                         {% endif %}
-                        {% if usuario_existe %}
-                            <p>No se encontró ningun usuario</p>
-                        {% endif %}
+                        
                         <button class="btn btn-custom type1" type="submit"
-                            value="Upload">Ingresar</button>
+                            value="Upload">Verificar</button>
                             <br><br>
-                        <a href="/olvideContrasena">¿Olvide mi contraseña?</a>
+                        <a href="/login">Volver a Login</a>
 
                     </form>
                 </div>

@@ -1,6 +1,8 @@
 import random
-
+from django.urls import reverse
+import smtplib
 import openpyxl
+import smtplib
 from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -61,6 +63,91 @@ def login(request):
                 {"login_fallo": login_fallo, "usuario_existe": usuario_existe},
             )
 
+
+def recuperarContrasena(request):
+    if request.method == "GET":
+        return render(request, "Archivos/olvideContrasena.html")
+    if request.method == "POST":
+        usuario_existe = False
+        correo = request.POST["usuario"]
+        if Perfiles.objects.filter(correo=correo).exists():
+            print("Hola, si existes")
+            usuario = correo.split("@")[0]
+            numeroVerificacion = random.randrange(100000,999999)
+            email_usuario = Perfiles.objects.filter(usuario=usuario)[0].correo
+            smtp_server = 'smtp.office365.com'
+            smtp_port = 587
+
+            sender = 'smartinezs2@correo.usbcali.edu.co'
+            contraseña = 'Usb30000062842'
+
+
+            receivers = [email_usuario]
+            message = """\
+            Subject: Codigo de Verificacion
+
+            Hola, soy el sistema de seguimiento de practicas. Has solicitado un cambio de contrasena, el numero de verificacion es""" + str(numeroVerificacion)+ """.
+            Espero haberte ayudado
+            """
+
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls()
+            server.login(sender, contraseña)
+            server.sendmail(sender, receivers, message)
+            server.quit()
+            return redirect(verificarNumero, usuario = correo.split("@")[0], numeroVerificacion=numeroVerificacion)
+        else:
+            usuario_existe = True
+            return render(
+                request,
+                "Archivos/olvideContrasena.html",
+                {"usuario_existe":usuario_existe},
+            )
+
+
+def verificarNumero(request, usuario, numeroVerificacion):
+
+    if request.method == 'POST':
+        ingresado = request.POST['numeroVerificacionIngresado']
+        print(ingresado,numeroVerificacion)
+        if ingresado == numeroVerificacion:
+            return redirect(ingresarNuevaContrasena, usuario = usuario)
+        else:
+            print("Intenta de nuevo")
+            autenticacion_fallo = True
+            return render(
+                request,
+                "Archivos/ingresarNumeroVerificacion.html",{"autenticacion_fallo":autenticacion_fallo}
+            )
+    return render(
+                request,
+                "Archivos/ingresarNumeroVerificacion.html",
+    )
+        
+    
+
+def ingresarNuevaContrasena(request, usuario):
+    if request.method == 'POST':
+        contrasenaNueva = request.POST['contrasena1']
+        contrasenaVerificar = request.POST['contrasena2']
+        if contrasenaNueva == contrasenaVerificar:
+            contrasenas_coinciden = True
+            Perfiles.objects.filter(usuario=usuario).update(contrasena = contrasenaNueva)
+            return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",{"contrasenas_coinciden":contrasenas_coinciden}
+            )
+        else:
+            contrasenas_coinciden = False
+            return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",{"contrasenas_coinciden":contrasenas_coinciden}
+            )
+
+    return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",
+            )
 
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
@@ -147,6 +234,7 @@ def CrearMonitor(request):
                     contrasena=Codigo,
                     nombre=Nombre,
                     cargo="Docente Monitor",
+                    correo=Correo
                 )
                 perfil.save()
                 creaMonitor = True
@@ -253,6 +341,7 @@ def agregarNuevoLider(request):
                 contrasena=Codigo,
                 nombre=Nombre,
                 cargo="Lider Oficina de Practicas",
+                correo=Correo
             )
             perfil.save()
             creaLiderOficina = True
@@ -283,6 +372,7 @@ def agregarNuevoAuxiliar(request):
                 contrasena=Codigo,
                 nombre=Nombre,
                 cargo="Lider Oficina de Practicas",
+                correo=Correo
             )
             perfil.save()
             creaAuxiliarOficina = True
@@ -321,6 +411,7 @@ def asignarNuevoCoordinador(request):
                 contrasena=monitor.codigo,
                 nombre=monitor.nombre,
                 cargo="Coordinador",
+                correo=correo
             )
             perfil.save()
             creaMonitor = True
@@ -422,6 +513,7 @@ def cargarArchivoEstudiantes(request):
                         contrasena=datos[2],
                         nombre=datos[6],
                         cargo="Estudiante",
+                        correo=datos[3]
                     )
                     perfil.save()
             return render(
