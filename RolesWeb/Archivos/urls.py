@@ -53,6 +53,11 @@ urlpatterns = [
         name="agregarNuevoLider",
     ),
     path(
+        "CrudPrograma/",
+        views.CrudPrograma,
+        name="CrudPrograma",
+    ),
+    path(
         "agregarNuevoAuxiliar/",
         views.agregarNuevoAuxiliar,
         name="agregarNuevoAuxiliar",
