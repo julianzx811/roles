@@ -49,6 +49,7 @@ class Estudiante(models.Model):
     docente_asignado = models.ForeignKey(
         monitores, on_delete=models.CASCADE, null=True, default=None
     )
+    estado_legalizacion = models.CharField(max_length=255, default='Incompleto', null=True)
 
 
 class Aspirantes(models.Model):

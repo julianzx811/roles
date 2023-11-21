@@ -149,6 +149,39 @@ def ingresarNuevaContrasena(request, usuario):
                 "Archivos/ingresarNuevaContrasena.html",
             )
 
+def legalizacionEstudiantes(request):
+    if request.method == "GET":
+        semestres = Semestres.objects.all()
+        print(semestres)
+        return render(
+            request,
+            "Archivos/legalizacionEstudiantes.html", {"semestres":semestres}
+        )
+    elif request.method == "POST":
+        periodo = request.POST['periodo_lectivo']
+        if 'uno' in request.POST:    
+            return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return render(
+            request, "Archivos/legalizacionEstudiantes.html"
+        )
+    
+def aprobarLegalizacionEstudiantes(request, periodo):
+    if request.method == "GET":
+        estudiantes = Estudiante.objects.filter(periodo_lectivo = periodo , estado_legalizacion = 'Pendiente')
+        return render(
+            request,
+            "Archivos/aprobarLegalizacionEstudiantes.html", {'estudiantes':estudiantes}
+        )
+    elif request.method == "POST":
+        
+        codigo = request.POST['aprobarPractica']
+        Estudiante.objects.filter(codigo = codigo).update(estado_legalizacion = 'Aprobado')
+
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
@@ -495,6 +528,15 @@ def cargarArchivoEstudiantes(request):
                             telefono=datos[5],
                             nombre=datos[6],
                         )
+                        perfil = Perfiles(
+                        usuario=datos[3].split("@")[0],
+                        contrasena=datos[2],
+                        nombre=datos[6],
+                        cargo="Practicante",
+                        correo=datos[3]
+                        )
+                        perfil.save()
+                        
                 else:
                     est1 = Estudiante(
                         codigo=datos[2],
@@ -512,7 +554,7 @@ def cargarArchivoEstudiantes(request):
                         usuario=datos[3].split("@")[0],
                         contrasena=datos[2],
                         nombre=datos[6],
-                        cargo="Estudiante",
+                        cargo="Practicante",
                         correo=datos[3]
                     )
                     perfil.save()
@@ -859,6 +901,10 @@ def SubirDocumentoEPS(request, estudiante_id):
 
 
 def DocumentosSubidos(request, estudiante_id):
+    if len(UploadedEPSFile.objects.filter(estudianteId_id = estudiante_id)) > 0 and len(UploadedLABORALFile.objects.filter(estudianteId_id = estudiante_id)) > 0:
+        estudiante = Estudiante.objects.filter(email_institucional = Perfiles.objects.filter(usuario = estudiante_id)[0].correo)
+        estudiante.update(estado_legalizacion = 'Pendiente')
+    
     return list_files(request, estudiante_id)
 
 
