@@ -107,4 +107,6 @@ urlpatterns = [
         name="documentos_subidos",
     ),
     path("files/<int:file_id>/", views.view_file, name="view_file"),
+    path("adminVisualizarEstudiantes/", views.adminVisualizarEstudiantes, name="adminVisualizarEstudiantes"),
+    path("UpdateEstudiante/<str:codigo>/",views.UpdateEstudiante,name="UpdateEstudiante")
 ]
