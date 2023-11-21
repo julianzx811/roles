@@ -494,6 +494,7 @@ def cargarArchivoEstudiantes(request):
                             email_personal=datos[4],
                             telefono=datos[5],
                             nombre=datos[6],
+                            estado_legalizacion='Legalizado',
                         )
                 else:
                     est1 = Estudiante(
@@ -504,6 +505,7 @@ def cargarArchivoEstudiantes(request):
                         telefono=datos[5],
                         nombre=datos[6],
                         periodo_lectivo=semestre_seleccionado.nombre,
+                        estado_legalizacion='Pendiente por cargar archivos',
                     )
                     agregados += 1
                     print("agregados", agregados)
