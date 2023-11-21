@@ -4,7 +4,7 @@ import smtplib
 import openpyxl
 import smtplib
 from django.forms.models import model_to_dict
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
@@ -882,6 +882,7 @@ def administrarSemestres(request):
             semestrito = Semestres(
                 nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
             )
+            print(semestrito)
             semestrito.save()
             return render(
                 request,
@@ -903,6 +904,13 @@ def UpdateSemestre(request, id):
     if request.method == "GET":
         semestre = Semestres.objects.get(pk=id)
         semestreobj = model_to_dict(semestre)
+         
+        # Formatea la fecha en el formato "AAAA-MM-DD"
+        fecha_inicio_formateada = semestreobj['fecha_inicio'].strftime("%Y-%m-%d")
+        semestreobj['fecha_inicio'] = fecha_inicio_formateada
+        fecha_fin_formateada = semestreobj['fecha_fin'].strftime("%Y-%m-%d")
+        semestreobj['fecha_fin'] = fecha_fin_formateada
+        
         return render(
             request,
             "Archivos/UpdateSemestre.html",
@@ -910,17 +918,17 @@ def UpdateSemestre(request, id):
         )
     elif request.method == "POST":
         try:
-            print("entro2")
+            
             semestre = request.POST["semestre"]
             fecha_inicio = request.POST["fecha_inicio"]
             fecha_fin = request.POST["fecha_fin"]
-            Semestres.objects.filter(nombre=semestre).update(
+            aux = Semestres.objects.filter(id=id).update(
                 nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
-            )
+            ) 
             request.method = "GET"
             return administrarSemestres(request)
         except Exception as error:
-            print(error)
+            print("eror: ",error)
             return administrarSemestres(request)
 
 
@@ -936,3 +944,38 @@ def DeleteSemestre(request, id):
     except Exception as error:
         print(error)
         return administrarSemestres(request)
+
+def adminVisualizarEstudiantes(request):
+    estudiantes = Estudiante.objects.all()      
+    
+    return render(request, "Archivos/listadoCrudEstudiantes.html", {"estudiantes": estudiantes})
+
+
+def UpdateEstudiante(request, codigo):
+    estudiante = get_object_or_404(Estudiante, codigo=codigo)
+    print(estudiante)
+    if request.method == 'POST':
+        try:
+            # Actualiza los campos directamente desde el request.POST
+            estudiante.programa = request.POST['programa']
+            estudiante.codigo = request.POST['codigo']
+            estudiante.email_institucional = request.POST['email_institucional']
+            estudiante.email_personal = request.POST['email_personal']
+            estudiante.telefono = request.POST['telefono']
+            estudiante.nombre = request.POST['nombre']
+            estudiante.apellidos = request.POST['apellidos']
+            estudiante.cedula = request.POST['cedula']
+            estudiante.celular = request.POST['celular']
+            estudiante.periodo_lectivo = request.POST['periodo_lectivo']
+            estudiante.plan_estudios = Plan_estudios.objects.get(id=int(request.POST['plan_estudios_id']))
+            estudiante.docente_asignado = monitores.objects.get(correo_institucional=request.POST['docente_asignado_id'])
+
+            
+            estudiante.save()
+
+            return redirect('adminVisualizarEstudiantes')
+        except Exception as e:
+            # Manejo de errores, puedes personalizar según tus necesidades
+            return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
+
+    return render(request, 'Archivos/UpdateEstudiante.html', {'estudiante': estudiante})
