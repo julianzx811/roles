@@ -1,23 +1,36 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
+
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <title>Gestión de Estudiantes</title>
     <style>
         body {
             background-color: #283747;
             color: white;
             margin: 0;
-            height: 100vh; 
+            height: 100vh;
             display: flex;
-            justify-content: center; 
-            align-items: center; 
+            justify-content: center;
+            align-items: center;
         }
 
-       
+
         .btn-custom {
             position: relative;
             padding: 1em 1.5em;
@@ -26,7 +39,7 @@
             cursor: pointer;
             outline: none;
             font-size: 18px;
-            margin: 0.5em; 
+            margin: 0.5em;
             color: #566473;
         }
 
@@ -67,20 +80,229 @@
         }
     </style>
 </head>
+
 <body>
-    
+
     <div class="container text-center">
         <a class="btn btn-danger" href="/login">Cerrar Sesion</a>
         <!-- <div class="display-6">Inicio</div> -->
         <div class="display-4">Lider Oficina de Practicas</div>
-        <p></p>
-        
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ plot_div|safe }}
+
+                </div>
+                <div class="col-md-6 text-start">
+                    <br><br>
+                    <button style="background-color:#EF553B; border: none;" type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#btnSinArchivos">
+                        Estudiantes sin archivos
+                    </button>
+                    <br><br>
+
+                    <button style="background-color: #636EFA;border: none;" type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#btnEstPendientes">
+                        Estudiantes pendientes
+                    </button>
+                    <br>
+                    <br>
+                    <button style="background-color: #00CC96;border: none;" type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#btnEstAprobados">
+                        Estudiantes aprobados
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Modal btnSinArchivos -->
+        <div class="modal fade" id="btnSinArchivos" tabindex="-1" aria-labelledby="btnSinArchivosModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="width: 800px;">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="btnSinArchivosModalLabel" style="color: black;">Estudiantes Incompletos</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="color: #00CC96;">
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Programa</th>
+                                        <th>Email Institucional</th>
+                                        <th>Email Personal</th>
+                                        <th>Teléfono</th>
+                                        <th>Nombre</th>
+                                        <th>Apellidos</th>
+                                        <th>Cédula</th>
+                                        <th>Celular</th>
+                                        <th>Periodo Lectivo</th>
+                                        <th>Plan de Estudios</th>
+                                        <th>Docente Asignado</th>
+                                        <th>Estado Legalización</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for estudiante in estudiantesIncompleto %}
+                                    <tr>
+                                        <td>{{ estudiante.codigo }}</td>
+                                        <td>{{ estudiante.programa }}</td>
+                                        <td>{{ estudiante.email_institucional }}</td>
+                                        <td>{{ estudiante.email_personal }}</td>
+                                        <td>{{ estudiante.telefono }}</td>
+                                        <td>{{ estudiante.nombre }}</td>
+                                        <td>{{ estudiante.apellidos }}</td>
+                                        <td>{{ estudiante.cedula }}</td>
+                                        <td>{{ estudiante.celular }}</td>
+                                        <td>{{ estudiante.periodo_lectivo }}</td>
+                                        <td>{{ estudiante.plan_estudios }}</td>
+                                        <td>{{ estudiante.docente_asignado }}</td>
+                                        <td>{{ estudiante.estado_legalizacion }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal btnEstPendientes -->
+        <div class="modal fade" id="btnEstPendientes" tabindex="-1" aria-labelledby="btnSinArchivosModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="width: 800px;">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="btnSinArchivosModalLabel" style="color: black;">Estudiantes Pendientes</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="color: #00CC96;">
+                    <div class="table-responsive">
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Programa</th>
+                                    <th>Email Institucional</th>
+                                    <th>Email Personal</th>
+                                    <th>Teléfono</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Cédula</th>
+                                    <th>Celular</th>
+                                    <th>Periodo Lectivo</th>
+                                    <th>Plan de Estudios</th>
+                                    <th>Docente Asignado</th>
+                                    <th>Estado Legalización</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in estudiantesPendientes %}
+                                <tr>
+                                    <td>{{ estudiante.codigo }}</td>
+                                    <td>{{ estudiante.programa }}</td>
+                                    <td>{{ estudiante.email_institucional }}</td>
+                                    <td>{{ estudiante.email_personal }}</td>
+                                    <td>{{ estudiante.telefono }}</td>
+                                    <td>{{ estudiante.nombre }}</td>
+                                    <td>{{ estudiante.apellidos }}</td>
+                                    <td>{{ estudiante.cedula }}</td>
+                                    <td>{{ estudiante.celular }}</td>
+                                    <td>{{ estudiante.periodo_lectivo }}</td>
+                                    <td>{{ estudiante.plan_estudios }}</td>
+                                    <td>{{ estudiante.docente_asignado }}</td>
+                                    <td>{{ estudiante.estado_legalizacion }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Modal btnEstAprobados -->
+        <div class="modal fade" id="btnEstAprobados" tabindex="-1" aria-labelledby="btnSinArchivosModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="width: 800px;">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="btnSinArchivosModalLabel" style="color: black;">Estudiantes Aprobados</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="color: #00CC96;">
+                    <div class="table-responsive">
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Programa</th>
+                                    <th>Email Institucional</th>
+                                    <th>Email Personal</th>
+                                    <th>Teléfono</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Cédula</th>
+                                    <th>Celular</th>
+                                    <th>Periodo Lectivo</th>
+                                    <th>Plan de Estudios</th>
+                                    <th>Docente Asignado</th>
+                                    <th>Estado Legalización</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in estudiantesAprobado %}
+                                <tr>
+                                    <td>{{ estudiante.codigo }}</td>
+                                    <td>{{ estudiante.programa }}</td>
+                                    <td>{{ estudiante.email_institucional }}</td>
+                                    <td>{{ estudiante.email_personal }}</td>
+                                    <td>{{ estudiante.telefono }}</td>
+                                    <td>{{ estudiante.nombre }}</td>
+                                    <td>{{ estudiante.apellidos }}</td>
+                                    <td>{{ estudiante.cedula }}</td>
+                                    <td>{{ estudiante.celular }}</td>
+                                    <td>{{ estudiante.periodo_lectivo }}</td>
+                                    <td>{{ estudiante.plan_estudios }}</td>
+                                    <td>{{ estudiante.docente_asignado }}</td>
+                                    <td>{{ estudiante.estado_legalizacion }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
         <div class="d-flex justify-content-center">
             <a class="btn btn-custom type1" href="/administrarSemestres">Administrar Semestres</a>
             <a class="btn btn-custom type1" href="/asignarNuevoCoordinador">Asignar Nuevo Coordinador de Practicas</a>
             <a class="btn btn-custom type1" href="/agregarNuevoAuxiliar">Asignar Nuevo Auxiliar</a>
             <a class="btn btn-custom type1" href="/CrudPrograma">Administrar programas</a>
+            <a class="btn btn-custom type1" href="/legalizacionEstudiantes">Legalizacion de Estudiantes</a>
         </div>
     </div>
+
 </body>
+
 </html>

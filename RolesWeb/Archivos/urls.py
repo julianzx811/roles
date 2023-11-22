@@ -19,6 +19,16 @@ urlpatterns = [
         views.AsignacionDocentesEstudiantes,
         name="AsignacionDocentesEstudiantes",
     ),
+    path(
+        "legalizacionEstudiantes/",
+        views.legalizacionEstudiantes,
+        name="legalizacionEstudiantes",
+    ),
+    path(
+        "aprobarLegalizacionEstudiantes/<str:periodo>",
+        views.aprobarLegalizacionEstudiantes,
+        name="aprobarLegalizacionEstudiantes",
+    ),
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
     # CRUD operations for programs
@@ -124,5 +134,4 @@ urlpatterns = [
     path("UpdateMonitor/<str:correo>/",views.UpdateMonitor,name="UpdateMonitor"),
     path("DeleteMonitor/<str:correo>/", views.DeleteMonitor, name="DeleteMonitor"),
     path("visualizarCoordinador/", views.visualizarCoordinador, name="visualizarCoordinador"),
-    
 ]

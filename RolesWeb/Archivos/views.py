@@ -6,8 +6,7 @@ import smtplib
 from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
-
+import plotly.express as px
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
                     FileUploadLABORALForm, ProgramForm)
@@ -151,6 +150,39 @@ def ingresarNuevaContrasena(request, usuario):
                 "Archivos/ingresarNuevaContrasena.html",
             )
 
+def legalizacionEstudiantes(request):
+    if request.method == "GET":
+        semestres = Semestres.objects.all()
+        print(semestres)
+        return render(
+            request,
+            "Archivos/legalizacionEstudiantes.html", {"semestres":semestres}
+        )
+    elif request.method == "POST":
+        periodo = request.POST['periodo_lectivo']
+        if 'uno' in request.POST:    
+            return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return render(
+            request, "Archivos/legalizacionEstudiantes.html"
+        )
+    
+def aprobarLegalizacionEstudiantes(request, periodo):
+    if request.method == "GET":
+        estudiantes = Estudiante.objects.filter(periodo_lectivo = periodo , estado_legalizacion = 'Pendiente')
+        return render(
+            request,
+            "Archivos/aprobarLegalizacionEstudiantes.html", {'estudiantes':estudiantes}
+        )
+    elif request.method == "POST":
+        
+        codigo = request.POST['aprobarPractica']
+        Estudiante.objects.filter(codigo = codigo).update(estado_legalizacion = 'Aprobado')
+
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
@@ -273,11 +305,31 @@ def indexCoordinador(request):
 
 
 def indexOficinaPracticas(request):
-    existe = Estudiante.objects.exists()
+    existe = Estudiante.objects.all()
+    estudiantesPendientes = Estudiante.objects.filter(estado_legalizacion = 'Pendiente')
+    estudiantesAprobado = Estudiante.objects.filter(estado_legalizacion = 'Aprobado')
+    estudiantesIncompleto = Estudiante.objects.filter(estado_legalizacion = 'Incompleto')
+    print(estudiantesPendientes)
+    data = [len(estudiantesPendientes), len(estudiantesAprobado), len(estudiantesIncompleto)]
+    labels = ['Pendientes', 'Aprobados', 'Incompletos']
+
+    fig = px.pie(
+        names=labels, 
+        values=data, 
+        title='Estado de Legalización de Estudiantes'  # Ajusta la opacidad según sea necesar
+        )
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+         font_color='white'
+    )
+
+    # Convierte la figura de Plotly a HTML
+    plot_div = fig.to_html(full_html=False)
     return render(
         request,
         "Archivos/vistaLiderOficinaPracticas.html",
-        {"archivo_subido": archivo_subido, "existe": existe},
+        {"archivo_subido": archivo_subido, "existe": existe,"plot_div": plot_div,"estudiantesAprobado":estudiantesAprobado,"estudiantesPendientes":estudiantesPendientes,"estudiantesIncompleto":estudiantesIncompleto},
     )
 
 
@@ -496,8 +548,16 @@ def cargarArchivoEstudiantes(request):
                             email_personal=datos[4],
                             telefono=datos[5],
                             nombre=datos[6],
-                            estado_legalizacion='Legalizado',
                         )
+                        perfil = Perfiles(
+                        usuario=datos[3].split("@")[0],
+                        contrasena=datos[2],
+                        nombre=datos[6],
+                        cargo="Practicante",
+                        correo=datos[3]
+                        )
+                        perfil.save()
+                        
                 else:
                     est1 = Estudiante(
                         codigo=datos[2],
@@ -507,7 +567,6 @@ def cargarArchivoEstudiantes(request):
                         telefono=datos[5],
                         nombre=datos[6],
                         periodo_lectivo=semestre_seleccionado.nombre,
-                        estado_legalizacion='Pendiente por cargar archivos',
                     )
                     agregados += 1
                     print("agregados", agregados)
@@ -516,7 +575,7 @@ def cargarArchivoEstudiantes(request):
                         usuario=datos[3].split("@")[0],
                         contrasena=datos[2],
                         nombre=datos[6],
-                        cargo="Estudiante",
+                        cargo="Practicante",
                         correo=datos[3]
                     )
                     perfil.save()
@@ -863,6 +922,10 @@ def SubirDocumentoEPS(request, estudiante_id):
 
 
 def DocumentosSubidos(request, estudiante_id):
+    if len(UploadedEPSFile.objects.filter(estudianteId_id = estudiante_id)) > 0 and len(UploadedLABORALFile.objects.filter(estudianteId_id = estudiante_id)) > 0:
+        estudiante = Estudiante.objects.filter(email_institucional = Perfiles.objects.filter(usuario = estudiante_id)[0].correo)
+        estudiante.update(estado_legalizacion = 'Pendiente')
+    
     return list_files(request, estudiante_id)
 
 
@@ -981,7 +1044,6 @@ def UpdateEstudiante(request, codigo):
             return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
 
     return render(request, 'Archivos/UpdateEstudiante.html', {'estudiante': estudiante})
-
 
 def visualizarAdministrador(request):
     # Filtra los usuarios con el cargo "Administrador"

@@ -41,7 +41,7 @@ class Estudiante(models.Model):
     # periodo_lectivo = models.ForeignKey(
     #     Semestres, on_delete=models.CASCADE, null=True, default=None
     # )
-    periodo_lectivo = models.CharField(max_length=255, default=None, null=True)
+    periodo_lectivo = models.CharField(max_length=100, default=None, null=True)
     # periodo_lectivo = models.CharField(max_length=255, default="2024-1", null="2024-1")
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
@@ -49,6 +49,7 @@ class Estudiante(models.Model):
     docente_asignado = models.ForeignKey(
         monitores, on_delete=models.CASCADE, null=True, default=None
     )
+    estado_legalizacion = models.CharField(max_length=255, default='Incompleto', null=True)
 
     ESTADOS_LEGALIZACION = [
         ('Legalizado', 'Legalizado'),
@@ -121,6 +122,9 @@ class UploadedEPSFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
+    
+    def returnID(self):
+        return self.estudianteId
 
 
 class UploadedLABORALFile(models.Model):
