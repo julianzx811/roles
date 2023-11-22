@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Añade tus enlaces y estilos aquí -->
+    <title>Gestión de Coordinadores</title>
+    <style>
+        /* Tus estilos existentes aquí */
+    </style>
+    <script>
+        // Función para filtrar coordinadores por cualquier campo
+        function filtrarCoordinadores() {
+            var filtro = document.getElementById('filtro').value.toUpperCase();
+            var filasCoordinadores = document.getElementById('datosCoordinadores').getElementsByTagName('tr');
+
+            for (var k = 0; k < filasCoordinadores.length; k++) {
+                var celdas = filasCoordinadores[k].getElementsByTagName('td');
+                var mostrarFila = false;
+
+                for (var j = 0; j < celdas.length; j++) {
+                    var textoCelda = celdas[j].textContent || celdas[j].innerText;
+
+                    if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                        mostrarFila = true;
+                        break;
+                    }
+                }
+
+                if (mostrarFila) {
+                    filasCoordinadores[k].style.display = '';
+                } else {
+                    filasCoordinadores[k].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <header class="navbar-custom">
+        <!-- Incluye tu barra de navegación -->
+    </header>
+
+    <div class="container text-center" style="margin-top: 70px;">
+        <div>
+            <h1>Listado de Coordinadores</h1>
+
+            <!-- Formulario de filtrado -->
+            <label for="filtro">Filtrar por cualquier campo:</label>
+            <input type="text" id="filtro" onkeyup="filtrarCoordinadores()" placeholder="Ingrese el criterio de búsqueda">
+        </div>
+        <br>
+        <!-- Contenedor de la tabla con desplazamiento vertical -->
+        <div id="tablaContainer">
+            <!-- Tabla de Datos -->
+            <table id="datosCoordinadores">
+                <thead>
+                    <!-- Encabezados de las columnas -->
+                    <tr style="color: white;">
+                        <th>ID Coordinador</th>
+                        <th>ID Docente</th>
+                        <!-- Agrega encabezados para los atributos del Docente -->
+                        <th>Nombre del Docente</th>
+                        <!-- Otros encabezados del Docente -->
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coordinador in coordinadores %}
+                        <!-- Filas de datos -->
+                        <tr>
+                            <td>{{ coordinador.id }}</td>
+                            <td>{{ coordinador.id_docente.correo }}</td>
+                            <!-- Muestra atributos del Docente -->
+                            <td>{{ coordinador.id_docente.nombre }}</td>
+                            <!-- Otros atributos del Docente -->
+                            <td>
+                                <a class="button edit-button" href="{% url 'UpdateCoordinador' id_coordinador=coordinador.id %}">Edit</a>
+                                <a class="button delete-button" href="{% url 'DeleteCoordinador' id_coordinador=coordinador.id %}">Delete</a> 
+                            </td> 
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Incluye tus scripts y enlaces a bibliotecas JS aquí -->
+</body>
+</html>
