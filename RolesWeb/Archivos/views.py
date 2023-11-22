@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 import plotly.express as px
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
-                    FileUploadLABORALForm, ProgramForm)
+                    FileUploadLABORALForm, ProgramForm, SemestreForm)
 from .models import (Aspirantes, Contrato, Coordinador, Estado_Practica,
                      Estudiante, Perfiles, Plan_estudios, Programas, Semestres,
                      UploadedARLFile, UploadedEPSFile, UploadedLABORALFile,
@@ -346,7 +346,6 @@ def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
     return render(
         request,
-        "Archivos/index.html",
         "Archivos/vistaDocenteMonitor.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
@@ -940,6 +939,41 @@ def administrarSemestres(request):
             request, "Archivos/administrarSemestre.html", {"semestres": semestres}
         )
     if request.method == "POST":
+        form = SemestreForm(request.POST)
+        print("form: ", form.data)
+        #if form.is_valid():
+        try:
+            semestre = form.data["selectedInfo"]
+            fecha_inicio = form.data["fecha_inicio"]
+            fecha_fin = form.data["fecha_fin"]
+            semestrito = Semestres(
+                nombre=semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
+            )
+            print(semestrito)
+            semestrito.save()
+            return render(
+                request,
+                "Archivos/administrarSemestre.html",
+                {
+                    "semestres": semestres,
+                },
+            )
+        except Exception as error:
+            print(error)
+            return render(
+                request,
+                "Archivos/administrarSemestre.html",
+                {"semestres": semestres},
+            )
+        #else:
+        #    print(form.errors)
+        #    return render(
+        #        request,
+        #        "Archivos/CreateSemestre.html",
+        #        {"error": "algo salio mal", "semestres": semestres},
+        #    )
+
+'''
         try:
             semestre = request.POST["semestre"]
             fecha_inicio = request.POST["fecha_inicio"]
@@ -963,6 +997,7 @@ def administrarSemestres(request):
                 "Archivos/administrarSemestre.html",
                 {"semestres": semestres},
             )
+'''
 
 
 def UpdateSemestre(request, id):

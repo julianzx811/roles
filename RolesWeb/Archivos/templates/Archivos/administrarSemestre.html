@@ -147,13 +147,19 @@
                 <div class="form-container">
                     <!-- Resto del contenido -->
                     <table class="program-table">
+                        {% if funciono %}
+                        <h1>{{funciono}}</h1>
+                        {% endif %}
+                        {% if error %}
+                        <h1>{{error}}</h1>
+                        {% endif %}
+
                         <thead>
                             <tr>
                                 <th>Semestre</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             {% for semestre in semestres %}
                                 <tr>

@@ -17,6 +17,11 @@ class ProgramForm(forms.Form):
     facultad = forms.CharField(max_length=100)
 
 
+class SemestreForm(forms.Form):
+    semestre = forms.CharField(max_length=100)
+    fecha_inicio = forms.DateField()
+    fecha_fin = forms.DateField()
+
 class FileUploadARLForm(forms.ModelForm):
     class Meta:
         model = UploadedARLFile
