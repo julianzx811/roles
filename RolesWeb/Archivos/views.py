@@ -185,6 +185,39 @@ def indexCoordinador(request):
 
 def indexOficinaPracticas(request):
     existe = Estudiante.objects.exists()
+    estudiantes = Estudiante.objects.all()
+
+    archivosArl = UploadedARLFile.objects.all()
+    idEstArl = []
+
+    for archivo in archivosArl:
+        try:
+            # Intenta obtener el objeto Perfiles, o devuelve 404 si no existe
+            estudiante_perfil = get_object_or_404(Perfiles, id=archivo.estudianteId)
+            id_estudiante = estudiante_perfil.usuario
+            idEstArl.append(id_estudiante)
+        except:
+            # Maneja la excepción si no se encuentra el objeto Perfiles
+            idEstArl.append(None)
+    """idEstEps = []
+    archivosEps = UploadedEPSFile.objects.all()
+    for archivo in archivosEps:
+        id_estudiante = archivo.estudianteId.estudianteId
+        idEstEps.append(id_estudiante)
+    idEstLaboral = []
+    archivosLaboral = UploadedLABORALFile.objects.all()
+    for archivo in archivosLaboral:
+        id_estudiante = archivo.estudianteId
+        idEstLaboral.append(id_estudiante)"""
+
+    print(idEstArl)
+    """for estudiante in estudiantes:
+        if estudiante.codigo in idEstArl:
+           print("existe")
+        else:
+            print("no existe", estudiante.codigo)
+"""
+    print(existe)
     return render(
         request,
         "Archivos/vistaLiderOficinaPracticas.html",

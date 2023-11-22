@@ -104,6 +104,9 @@ class UploadedEPSFile(models.Model):
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     estudianteId = models.OneToOneField(Perfiles, on_delete=models.CASCADE)
+    
+    def returnID(self):
+        return self.estudianteId
 
 
 class UploadedLABORALFile(models.Model):
