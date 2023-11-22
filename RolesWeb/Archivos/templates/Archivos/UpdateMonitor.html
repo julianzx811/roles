@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Editar monitor</title>
+    <style>
+        body {
+            background-color: #283747;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.5); 
+            padding: 20px;
+            border-radius: 10px; 
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar-custom">
+        {% include 'navbarAdmin.html' %}
+    </header>
+    <min style="padding-top: 730px;">
+        <div>
+            <div class="row ">
+                <div class="col-lg-8">
+                    <div class="form-container" style="width: 1000px;">
+                        <form method="post" action="{% url 'UpdateMonitor' correo=monitor.correo_institucional %}">
+                            {% csrf_token %}
+                    
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ monitor.nombre }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label for="codigo" class="form-label">Código:</label>
+                                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ monitor.codigo }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label for="correo_institucional" class="form-label">Correo Institucional:</label>
+                                <input type="email" class="form-control" id="correo_institucional" name="correo_institucional" value="{{ monitor.correo_institucional }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label for="horas_disponibles" class="form-label">Horas Disponibles:</label>
+                                <input type="text" class="form-control" id="horas_disponibles" name="horas_disponibles" value="{{ monitor.horas_disponibles }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label for="programa" class="form-label">Programa:</label>
+                                <input type="text" class="form-control" id="programa" name="programa" value="{{ monitor.programa.programa }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado:</label>
+                                <input type="text" class="form-control" id="estado" name="estado" value="{{ monitor.estado }}" required>
+                            </div>
+                    
+                            <button class="btn btn-custom type1" type="submit">Actualizar Monitor</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </min>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

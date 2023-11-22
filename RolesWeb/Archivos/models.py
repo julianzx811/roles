@@ -51,6 +51,18 @@ class Estudiante(models.Model):
     )
     estado_legalizacion = models.CharField(max_length=255, default='Incompleto', null=True)
 
+    ESTADOS_LEGALIZACION = [
+        ('Legalizado', 'Legalizado'),
+        ('Pendiente por legalizar', 'Pendiente por legalizar'),
+        ('Pendiente por cargar archivos', 'Pendiente por cargar archivos'),
+    ]
+
+    estado_legalizacion = models.CharField(
+        max_length=50,
+        choices=ESTADOS_LEGALIZACION,
+        default='Pendiente por cargar archivos',
+    )
+
 
 class Aspirantes(models.Model):
     periodo_practica = models.CharField(max_length=255, null=False)

@@ -2,12 +2,21 @@
 <html lang="es">
 
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    
-    <title>Gestión de Estudiantes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+
+    <title>Gestión de Monitores</title>
     <style>
         body {
             background-color: #283747;
@@ -18,7 +27,6 @@
             justify-content: center;
             align-items: center;
         }
-
 
         .navbar-brand-custom {
             color: #283747;
@@ -118,7 +126,6 @@
             color: white;
         }
 
-   
         /**/
         /* Estilos para la tabla */
         #tablaContainer {
@@ -132,12 +139,21 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
             width: auto; /* Ajuste el ancho de acuerdo con el contenido */
         }
+
+        #adminSection {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
         .button {
             text-decoration: none;
             display: inline-block;
@@ -161,23 +177,17 @@
         .button:hover {
             opacity: 0.8;
         } 
-        
     </style>
     <script>
-        // Función para filtrar estudiantes por cualquier campo
-        function filtrarEstudiantes() {
-            // Obtener el valor del input de filtrado
+        // Función para filtrar monitores por cualquier campo
+        function filtrarMonitores() {
             var filtro = document.getElementById('filtro').value.toUpperCase();
+            var filasMonitores = document.getElementById('datosMonitores').getElementsByTagName('tr');
 
-            // Obtener todas las filas de datos
-            var filas = document.getElementById('datosEstudiantes').getElementsByTagName('tr');
-
-            // Recorrer las filas y ocultar aquellas que no coincidan con el filtro
-            for (var i = 0; i < filas.length; i++) {
-                var celdas = filas[i].getElementsByTagName('td');
+            for (var k = 0; k < filasMonitores.length; k++) {
+                var celdas = filasMonitores[k].getElementsByTagName('td');
                 var mostrarFila = false;
 
-                // Recorrer todas las celdas de la fila
                 for (var j = 0; j < celdas.length; j++) {
                     var textoCelda = celdas[j].textContent || celdas[j].innerText;
 
@@ -187,11 +197,10 @@
                     }
                 }
 
-                // Mostrar u ocultar la fila según el resultado de la búsqueda
                 if (mostrarFila) {
-                    filas[i].style.display = '';
+                    filasMonitores[k].style.display = '';
                 } else {
-                    filas[i].style.display = 'none';
+                    filasMonitores[k].style.display = 'none';
                 }
             }
         }
@@ -205,58 +214,47 @@
 
     <div class="container text-center" style="margin-top: 70px;">
         <div>
-            <h1>Listado de Estudiantes</h1>
+            <h1>Listado de Monitores</h1>
 
             <!-- Formulario de filtrado -->
             <label for="filtro">Filtrar por cualquier campo:</label>
-            <input type="text" id="filtro" onkeyup="filtrarEstudiantes()" placeholder="Ingrese el criterio de búsqueda">
+            <input type="text" id="filtro" onkeyup="filtrarMonitores()"
+                placeholder="Ingrese el criterio de búsqueda">
         </div>
         <br>
         <!-- Contenedor de la tabla con desplazamiento vertical -->
         <div id="tablaContainer">
-            
+
             <!-- Tabla de Datos -->
-            <table id="datosEstudiantes">
-                <thead >
+            <table id="datosMonitores">
+                <thead>
                     <!-- Encabezados de las columnas -->
                     <tr style="color: white;">
-                        <th>Programa</th>
-                        <th>Código</th>
-                        <th>Email Institucional</th>
-                        <th>Email Personal</th>
-                        <th>Teléfono</th>
                         <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Cédula</th>
-                        <th>Celular</th>
-                        <th>Periodo Lectivo</th>
-                        <th>Plan de Estudios ID</th>
-                        <th>Docente Asignado ID</th>
+                        <th>Código</th>
+                        <th>Correo Institucional</th>
+                        <th>Horas Disponibles</th>
+                        <th>Programa</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for estudiante in estudiantes %}
+                    {% for monitor in monitores %}
                     <!-- Filas de datos -->
                     <tr>
-                        <td>{{ estudiante.programa }}</td>
-                        <td>{{ estudiante.codigo }}</td>
-                        <td>{{ estudiante.email_institucional }}</td>
-                        <td>{{ estudiante.email_personal }}</td>
-                        <td>{{ estudiante.telefono }}</td>
-                        <td>{{ estudiante.nombre }}</td>
-                        <td>{{ estudiante.apellidos }}</td>
-                        <td>{{ estudiante.cedula }}</td>
-                        <td>{{ estudiante.celular }}</td>
-                        <td>{{ estudiante.periodo_lectivo }}</td>
-                        <td>{{ estudiante.plan_estudios_id }}</td>
-                        <td>{{ estudiante.docente_asignado_id }}</td>
+                        <td>{{ monitor.nombre }}</td>
+                        <td>{{ monitor.codigo }}</td>
+                        <td>{{ monitor.correo_institucional }}</td>
+                        <td>{{ monitor.horas_disponibles }}</td>
+                        <td>{{ monitor.programa.programa }}</td>
+                        <td>{{ monitor.estado }}</td>
                         <td>
-                            <a class="button edit-button" href="{% url 'UpdateEstudiante' codigo=estudiante.codigo %}">Editar</a>
-                            <a class="button delete-button" href="{% url 'DeleteSemestre' estudiante.codigo %}">Eliminar</a>                    </tr>
+                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=monitor.correo_institucional %}">Editar</a>
+                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=monitor.correo_institucional %}">Eliminar</a>
+                        </td>
+                    </tr>
                     {% endfor %}
-
-                    
                 </tbody>
                 <br>
             </table>

@@ -126,5 +126,13 @@ urlpatterns = [
     ),
     path("files/<int:file_id>/", views.view_file, name="view_file"),
     path("adminVisualizarEstudiantes/", views.adminVisualizarEstudiantes, name="adminVisualizarEstudiantes"),
-    path("UpdateEstudiante/<str:codigo>/",views.UpdateEstudiante,name="UpdateEstudiante")
+    path("UpdateEstudiante/<str:codigo>/",views.UpdateEstudiante,name="UpdateEstudiante"),
+    path("visualizarAdministrador/", views.visualizarAdministrador, name="visualizarAdministrador"),
+    path("UpdateAdministrador/<str:usuario>/",views.UpdateAdministrador,name="UpdateAdministrador"),
+    path("DeleteAdministrador/<str:usuario>/", views.DeleteAdministrador, name="DeleteAdministrador"),
+    path("visualizarMonitor/", views.visualizarMonitor, name="visualizarMonitor"),
+    path("UpdateMonitor/<str:correo>/",views.UpdateMonitor,name="UpdateMonitor"),
+    path("DeleteMonitor/<str:correo>/", views.DeleteMonitor, name="DeleteMonitor"),
+    path("visualizarCoordinador/", views.visualizarCoordinador, name="visualizarCoordinador"),
+    
 ]
