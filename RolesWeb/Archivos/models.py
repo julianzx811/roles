@@ -41,7 +41,7 @@ class Estudiante(models.Model):
     # periodo_lectivo = models.ForeignKey(
     #     Semestres, on_delete=models.CASCADE, null=True, default=None
     # )
-    periodo_lectivo = models.CharField(max_length=255, default=None, null=True)
+    periodo_lectivo = models.CharField(max_length=100, default=None, null=True)
     # periodo_lectivo = models.CharField(max_length=255, default="2024-1", null="2024-1")
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True

@@ -6,6 +6,7 @@ import smtplib
 from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+import plotly.express as px
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
                     FileUploadLABORALForm, ProgramForm)
@@ -304,44 +305,31 @@ def indexCoordinador(request):
 
 
 def indexOficinaPracticas(request):
-    existe = Estudiante.objects.exists()
-    estudiantes = Estudiante.objects.all()
+    existe = Estudiante.objects.all()
+    estudiantesPendientes = Estudiante.objects.filter(estado_legalizacion = 'Pendiente')
+    estudiantesAprobado = Estudiante.objects.filter(estado_legalizacion = 'Aprobado')
+    estudiantesIncompleto = Estudiante.objects.filter(estado_legalizacion = 'Incompleto')
+    print(estudiantesPendientes)
+    data = [len(estudiantesPendientes), len(estudiantesAprobado), len(estudiantesIncompleto)]
+    labels = ['Pendientes', 'Aprobados', 'Incompletos']
 
-    archivosArl = UploadedARLFile.objects.all()
-    idEstArl = []
+    fig = px.pie(
+        names=labels, 
+        values=data, 
+        title='Estado de Legalización de Estudiantes'  # Ajusta la opacidad según sea necesar
+        )
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+         font_color='white'
+    )
 
-    for archivo in archivosArl:
-        try:
-            # Intenta obtener el objeto Perfiles, o devuelve 404 si no existe
-            estudiante_perfil = get_object_or_404(Perfiles, id=archivo.estudianteId)
-            id_estudiante = estudiante_perfil.usuario
-            idEstArl.append(id_estudiante)
-        except:
-            # Maneja la excepción si no se encuentra el objeto Perfiles
-            idEstArl.append(None)
-    """idEstEps = []
-    archivosEps = UploadedEPSFile.objects.all()
-    for archivo in archivosEps:
-        id_estudiante = archivo.estudianteId.estudianteId
-        idEstEps.append(id_estudiante)
-    idEstLaboral = []
-    archivosLaboral = UploadedLABORALFile.objects.all()
-    for archivo in archivosLaboral:
-        id_estudiante = archivo.estudianteId
-        idEstLaboral.append(id_estudiante)"""
-
-    print(idEstArl)
-    """for estudiante in estudiantes:
-        if estudiante.codigo in idEstArl:
-           print("existe")
-        else:
-            print("no existe", estudiante.codigo)
-"""
-    print(existe)
+    # Convierte la figura de Plotly a HTML
+    plot_div = fig.to_html(full_html=False)
     return render(
         request,
         "Archivos/vistaLiderOficinaPracticas.html",
-        {"archivo_subido": archivo_subido, "existe": existe},
+        {"archivo_subido": archivo_subido, "existe": existe,"plot_div": plot_div,"estudiantesAprobado":estudiantesAprobado,"estudiantesPendientes":estudiantesPendientes,"estudiantesIncompleto":estudiantesIncompleto},
     )
 
 
