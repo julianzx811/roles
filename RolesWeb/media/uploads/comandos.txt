@@ -1,5 +1,0 @@
--activar ambiente linux
-source roles-env/bin/activate   
-
--desactivar ambiente
-deactivate

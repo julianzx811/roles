@@ -813,13 +813,13 @@ def iniciar_practicas(request, estudiante_id):
     return render(request, "Archivos/iniciarPracticas.html")
 
 
-def upload_file(request, stringhtml, formxd, estudiante_id):
+def upload_file(request, stringhtml, formxd, estudiante_id,model):
     perfil = Perfiles.objects.get(pk=estudiante_id)
     print(perfil)
     if request.method == "POST":
         form = formxd(request.POST, request.FILES)
         if form.is_valid():
-            file = UploadedLABORALFile.objects.filter(estudianteId=perfil)
+            file = model.objects.filter(estudianteId=perfil)
             if file.exists():
                 existing_file = (
                     file.first()
@@ -842,19 +842,19 @@ def upload_file(request, stringhtml, formxd, estudiante_id):
 
 def SubirContranoLaboral(request, estudiante_id):
     return upload_file(
-        request, "SubirContranoLaboral.html", FileUploadLABORALForm, estudiante_id
+        request, "SubirContranoLaboral.html", FileUploadLABORALForm, estudiante_id,UploadedLABORALFile
     )
 
 
 def SubirAfiliacionARL(request, estudiante_id):
     return upload_file(
-        request, "SubirAfiliacionARL.html", FileUploadARLForm, estudiante_id
+        request, "SubirAfiliacionARL.html", FileUploadARLForm, estudiante_id,UploadedARLFile
     )
 
 
 def SubirDocumentoEPS(request, estudiante_id):
     return upload_file(
-        request, "SubirDocumentoEPS.html", FileUploadEPSForm, estudiante_id
+        request, "SubirDocumentoEPS.html", FileUploadEPSForm, estudiante_id,UploadedEPSFile
     )
 
 
