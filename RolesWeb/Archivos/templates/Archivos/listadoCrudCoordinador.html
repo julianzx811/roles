@@ -1,10 +1,183 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <!-- Añade tus enlaces y estilos aquí -->
-    <title>Gestión de Coordinadores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+
+    <title>Gestión de Monitores</title>
     <style>
-        /* Tus estilos existentes aquí */
+        body {
+            background-color: #283747;
+            color: white;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .navbar-brand-custom {
+            color: #283747;
+        }
+
+        .btn-custom {
+            position: relative;
+            padding: 1em 2em;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            outline: none;
+            font-size: 18px;
+            margin: 0.5em;
+            color: #283747;
+            transition: color 0.3s;
+        }
+
+        .btn-custom.type1::after,
+        .btn-custom.type1::before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            border: 2px solid;
+            transition: all 0.6s ease;
+            border-radius: 2px;
+        }
+
+        .btn-custom.type1::after {
+            bottom: 0;
+            right: 0;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-bottom-color: #566473;
+            border-right-color: #566473;
+        }
+
+        .btn-custom.type1::before {
+            top: 0;
+            left: 0;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-top-color: #566473;
+            border-left-color: #566473;
+        }
+
+        .btn-custom.type1:hover::after,
+        .btn-custom.type1:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .slider-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .slider-button {
+            background-color: #566473;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 20px;
+        }
+
+        .slider-content {
+            display: none;
+            position: absolute;
+            background-color: #313d4a;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .slider-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+        }
+
+        .slider-content a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .slider-container:hover .slider-content {
+            display: block;
+        }
+
+        .slider-button:hover {
+            background-color: #283747;
+            color: white;
+        }
+
+        /**/
+        /* Estilos para la tabla */
+        #tablaContainer {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            width: auto; /* Ajuste el ancho de acuerdo con el contenido */
+        }
+
+        #adminSection {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
+        /* 
+        .button {
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .edit-button {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #e74c3c; 
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        } */
     </style>
     <script>
         // Función para filtrar coordinadores por cualquier campo
@@ -36,53 +209,50 @@
 </head>
 <body>
     <header class="navbar-custom">
-        <!-- Incluye tu barra de navegación -->
+        {% include 'navbarAdmin.html' %}
     </header>
 
     <div class="container text-center" style="margin-top: 70px;">
         <div>
             <h1>Listado de Coordinadores</h1>
 
-            <!-- Formulario de filtrado -->
             <label for="filtro">Filtrar por cualquier campo:</label>
             <input type="text" id="filtro" onkeyup="filtrarCoordinadores()" placeholder="Ingrese el criterio de búsqueda">
         </div>
         <br>
-        <!-- Contenedor de la tabla con desplazamiento vertical -->
         <div id="tablaContainer">
-            <!-- Tabla de Datos -->
             <table id="datosCoordinadores">
                 <thead>
-                    <!-- Encabezados de las columnas -->
                     <tr style="color: white;">
-                        <th>ID Coordinador</th>
-                        <th>ID Docente</th>
-                        <!-- Agrega encabezados para los atributos del Docente -->
-                        <th>Nombre del Docente</th>
-                        <!-- Otros encabezados del Docente -->
+                        
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Correo Institucional</th>
+                        <th>Horas Disponibles</th>
+                        <th>Programa</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for coordinador in coordinadores %}
-                        <!-- Filas de datos -->
-                        <tr>
-                            <td>{{ coordinador.id }}</td>
-                            <td>{{ coordinador.id_docente.correo }}</td>
-                            <!-- Muestra atributos del Docente -->
-                            <td>{{ coordinador.id_docente.nombre }}</td>
-                            <!-- Otros atributos del Docente -->
-                            <td>
-                                <a class="button edit-button" href="{% url 'UpdateCoordinador' id_coordinador=coordinador.id %}">Edit</a>
-                                <a class="button delete-button" href="{% url 'DeleteCoordinador' id_coordinador=coordinador.id %}">Delete</a> 
-                            </td> 
-                        </tr>
-                    {% endfor %}
+                    <tr>
+                        <td>{{ coordinador.id_docente.nombre }}</td>
+                        <td>{{ coordinador.id_docente.codigo }}</td>
+                        <td>{{ coordinador.id_docente.correo_institucional }}</td>
+                        <td>{{ coordinador.id_docente.horas_disponibles }}</td>
+                        <td>{{ coordinador.id_docente.programa.programa }}</td>
+                        <td>{{ coordinador.id_docente.estado }}</td>
+                        <td>
+                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=coordinador.id_docente.correo_institucional %}">Edit</a>
+                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=coordinador.id_docente.correo_institucional %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Incluye tus scripts y enlaces a bibliotecas JS aquí -->
 </body>
 </html>

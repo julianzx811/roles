@@ -223,7 +223,7 @@
                         <td>{{ monitor.codigo }}</td>
                         <td>{{ monitor.correo_institucional }}</td>
                         <td>{{ monitor.horas_disponibles }}</td>
-                        <td>{{ monitor.programa }}</td>
+                        <td>{{ monitor.programa.programa }}</td>
                         <td>{{ monitor.estado }}</td>
                         <td>
                             <a class="button edit-button" href="{% url 'UpdateMonitor' correo=monitor.correo_institucional %}">Edit</a>

@@ -1067,32 +1067,5 @@ def DeleteMonitor(request, correo):
     
 
 def visualizarCoordinador(request):
-    coordinadores = Coordinador.objects.all()  
+    coordinadores = Coordinador.objects.select_related('id_docente').all()
     return render(request, 'Archivos/listadoCrudCoordinador.html', {'coordinadores': coordinadores})
-
-def UpdateCoordinador(request, id_coordinador):
-    coordinador = get_object_or_404(Coordinador, id=id_coordinador)
-
-    if request.method == 'POST':
-        try:
-            # Actualiza los campos directamente desde el request.POST
-            coordinador.id_docente.nombre = request.POST['nombre']
-            coordinador.id_docente.correo = request.POST['correo']
-
-            coordinador.save()
-
-            return redirect('visualizarCoordinadores')
-        except Exception as e:
-            # Manejo de errores, puedes personalizar según tus necesidades
-            return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
-
-    return render(request, 'Archivos/UpdateCoordinador.html', {'coordinador': coordinador})
-
-def DeleteCoordinador(request, id_coordinador):
-    coordinador = get_object_or_404(Coordinador, id=id_coordinador)
-    try:
-        coordinador.delete()
-        return visualizarCoordinador(request)
-    except Exception as error:
-        print(error)
-        return visualizarCoordinador(request)
