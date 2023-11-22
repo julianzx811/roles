@@ -134,4 +134,7 @@ urlpatterns = [
     path("UpdateMonitor/<str:correo>/",views.UpdateMonitor,name="UpdateMonitor"),
     path("DeleteMonitor/<str:correo>/", views.DeleteMonitor, name="DeleteMonitor"),
     path("visualizarCoordinador/", views.visualizarCoordinador, name="visualizarCoordinador"),
+    path("visualizarLiderOficinaPracticas/", views.visualizarLiderOficinaPracticas, name="visualizarLiderOficinaPracticas"),
+    path("UpdateLider/<str:usuario>/",views.UpdateLider,name="UpdateLider"),
+    path("DeleteLider/<str:usuario>/", views.DeleteLider, name="DeleteLider"),
 ]

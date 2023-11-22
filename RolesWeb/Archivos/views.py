@@ -1131,3 +1131,43 @@ def DeleteMonitor(request, correo):
 def visualizarCoordinador(request):
     coordinadores = Coordinador.objects.select_related('id_docente').all()
     return render(request, 'Archivos/listadoCrudCoordinador.html', {'coordinadores': coordinadores})
+
+def visualizarLiderOficinaPracticas(request):
+    # Filtra los usuarios con el cargo "Administrador"
+    lideres = Perfiles.objects.filter(cargo='Lider Oficina de Practicas')
+
+    # Puedes enviar la lista de administradores a tu template
+    return render(request, 'listadoCrudLiderOficinaPracticas.html', {'lideres': lideres})
+
+
+def UpdateLider(request, usuario):
+    lider = get_object_or_404(Perfiles, usuario=usuario, cargo='Lider Oficina de Practicas')
+
+    if request.method == 'POST':
+        try:
+            # Actualiza los campos directamente desde el request.POST
+            lider.contrasena = request.POST['contrasena']
+            lider.usuario = request.POST['usuario']
+            lider.nombre = request.POST['nombre']
+            lider.cargo = request.POST['cargo']
+            lider.correo = request.POST['correo']
+
+            lider.save()
+
+            return redirect('visualizarLiderOficinaPracticas')
+        except Exception as e:
+            # Manejo de errores, puedes personalizar según tus necesidades
+            return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
+
+    return render(request, 'Archivos/UpdateAdministrador.html', {'lider': lider})
+
+
+def DeleteLider(request, usuario):
+    lider = get_object_or_404(Perfiles, usuario=usuario)
+    try:
+        lider.delete()
+        return visualizarLiderOficinaPracticas(request)
+    except Exception as error:
+        print(error)
+        return visualizarLiderOficinaPracticas(request)
+    
