@@ -1044,3 +1044,90 @@ def UpdateEstudiante(request, codigo):
             return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
 
     return render(request, 'Archivos/UpdateEstudiante.html', {'estudiante': estudiante})
+
+def visualizarAdministrador(request):
+    # Filtra los usuarios con el cargo "Administrador"
+    administradores = Perfiles.objects.filter(cargo='Administrador')
+
+    # Puedes enviar la lista de administradores a tu template
+    return render(request, 'listadoCrudAdministrador.html', {'administradores': administradores})
+
+
+def UpdateAdministrador(request, usuario):
+    administrador = get_object_or_404(Perfiles, usuario=usuario, cargo='Administrador')
+
+    if request.method == 'POST':
+        try:
+            # Actualiza los campos directamente desde el request.POST
+            administrador.contrasena = request.POST['contrasena']
+            administrador.usuario = request.POST['usuario']
+            administrador.nombre = request.POST['nombre']
+            administrador.cargo = request.POST['cargo']
+            administrador.correo = request.POST['correo']
+
+            administrador.save()
+
+            return redirect('visualizarAdministrador')
+        except Exception as e:
+            # Manejo de errores, puedes personalizar según tus necesidades
+            return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
+
+    return render(request, 'Archivos/UpdateAdministrador.html', {'administrador': administrador})
+
+
+def DeleteAdministrador(request, usuario):
+    administrador = get_object_or_404(Perfiles, usuario=usuario)
+    try:
+        administrador.delete()
+        return visualizarAdministrador(request)
+    except Exception as error:
+        print(error)
+        return visualizarAdministrador(request)
+    
+
+def visualizarMonitor(request):
+    _monitores = monitores.objects.all()  
+
+    return render(request, 'listadoCrudMonitor.html', {'monitores': _monitores})
+
+
+def UpdateMonitor(request, correo):
+    monitor = get_object_or_404(monitores, correo_institucional=correo)
+
+    if request.method == 'POST':
+        try:
+            # Actualiza los campos directamente desde el request.POST
+              
+            monitor.nombre = request.POST['nombre']
+            monitor.codigo = request.POST['codigo']
+            monitor.correo_institucional = request.POST['correo_institucional']
+            monitor.horas_disponibles = request.POST['horas_disponibles']
+            Programa = request.POST.get("programa")
+            programa_instance = Programas.objects.get(programa=Programa)
+            monitor.programa = programa_instance
+            monitor.estado = request.POST['estado']
+            
+
+            monitor.save()
+
+            return redirect('visualizarMonitor')
+        except Exception as e:
+            # Manejo de errores, puedes personalizar según tus necesidades
+            return HttpResponseBadRequest("Error en la actualización. Detalles: " + str(e))
+
+    return render(request, 'Archivos/UpdateMonitor.html', {'monitor': monitor})
+
+
+def DeleteMonitor(request, correo):
+    monitor = get_object_or_404(monitores, correo_institucional=correo)
+    try:
+        monitor.delete()
+        return visualizarMonitor(request)
+    except Exception as error:
+        print(error)
+        return visualizarMonitor(request)
+    
+
+def visualizarCoordinador(request):
+    coordinadores = Coordinador.objects.select_related('id_docente').all()
+    return render(request, 'Archivos/listadoCrudCoordinador.html', {'coordinadores': coordinadores})
