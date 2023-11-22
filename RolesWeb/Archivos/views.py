@@ -7,6 +7,7 @@ from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 import plotly.express as px
+from datetime import datetime
 
 from .forms import (DatosForm, FileUploadARLForm, FileUploadEPSForm,
                     FileUploadLABORALForm, ProgramForm)
@@ -425,7 +426,7 @@ def agregarNuevoAuxiliar(request):
                 usuario=Correo.split("@")[0],
                 contrasena=Codigo,
                 nombre=Nombre,
-                cargo="Lider Oficina de Practicas",
+                cargo="Auxiliar Oficina de Practicas",
                 correo=Correo
             )
             perfil.save()
@@ -998,6 +999,27 @@ def UpdateSemestre(request, id):
 
 
 def CreateSemestre(request):
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        nombre_semestre = request.POST.get('nombre')
+        fecha_inicio_semestre = request.POST.get('fecha_inicio')
+        fecha_fin_semestre = request.POST.get('fecha_fin')
+
+        try:
+            # Intentar convertir las fechas a objetos Date
+            fecha_inicio = datetime.strptime(fecha_inicio_semestre, '%Y-%m-%d').date()
+            fecha_fin = datetime.strptime(fecha_fin_semestre, '%Y-%m-%d').date()
+
+            # Crear el objeto Semestres
+            semestre = Semestres(nombre=nombre_semestre, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin)
+            semestre.save()
+
+            print(f"Semestre '{nombre_semestre}' creado exitosamente.")
+            return render(request, "Archivos/CreateSemestre.html", {'success_message': f"Semestre '{nombre_semestre}' creado exitosamente."})
+        except Exception as e:
+            print(f"Error al crear el semestre: {e}")
+            return render(request, "Archivos/CreateSemestre.html", {'error_message': f"Error al crear el semestre: {e}"})
+
     return render(request, "Archivos/CreateSemestre.html")
 
 
