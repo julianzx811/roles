@@ -138,7 +138,29 @@
             padding: 8px;
             width: auto; /* Ajuste el ancho de acuerdo con el contenido */
         }
+        .button {
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
 
+        .edit-button {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #e74c3c; 
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        } 
         
     </style>
     <script>
@@ -230,8 +252,8 @@
                         <td>{{ estudiante.plan_estudios_id }}</td>
                         <td>{{ estudiante.docente_asignado_id }}</td>
                         <td>
-                            <a class="button edit-button" href="{% url 'UpdateEstudiante' codigo=estudiante.codigo %}">Edit</a>
-                            <a class="button delete-button" href="{% url 'DeleteSemestre' estudiante.codigo %}">Delete</a>                    </tr>
+                            <a class="button edit-button" href="{% url 'UpdateEstudiante' codigo=estudiante.codigo %}">Editar</a>
+                            <a class="button delete-button" href="{% url 'DeleteSemestre' estudiante.codigo %}">Eliminar</a>                    </tr>
                     {% endfor %}
 
                     

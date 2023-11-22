@@ -154,7 +154,7 @@
             color: #ecf0f1;
         }
 
-        /* 
+        
         .button {
             text-decoration: none;
             display: inline-block;
@@ -177,7 +177,7 @@
 
         .button:hover {
             opacity: 0.8;
-        } */
+        } 
     </style>
     <script>
         // Función para filtrar coordinadores por cualquier campo
@@ -244,8 +244,8 @@
                         <td>{{ coordinador.id_docente.programa.programa }}</td>
                         <td>{{ coordinador.id_docente.estado }}</td>
                         <td>
-                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=coordinador.id_docente.correo_institucional %}">Edit</a>
-                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=coordinador.id_docente.correo_institucional %}">Delete</a>
+                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=coordinador.id_docente.correo_institucional %}">Editar</a>
+                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=coordinador.id_docente.correo_institucional %}">Eliminar</a>
                         </td>
                     </tr>
                 {% endfor %}

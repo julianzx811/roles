@@ -153,6 +153,30 @@
             background-color: #34495e;
             color: #ecf0f1;
         }
+
+        .button {
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .edit-button {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #e74c3c; 
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        } 
     </style>
     <script>
         // Función para filtrar monitores por cualquier campo
@@ -226,8 +250,8 @@
                         <td>{{ monitor.programa.programa }}</td>
                         <td>{{ monitor.estado }}</td>
                         <td>
-                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=monitor.correo_institucional %}">Edit</a>
-                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=monitor.correo_institucional %}">Delete</a>
+                            <a class="button edit-button" href="{% url 'UpdateMonitor' correo=monitor.correo_institucional %}">Editar</a>
+                            <a class="button delete-button" href="{% url 'DeleteMonitor' correo=monitor.correo_institucional %}">Eliminar</a>
                         </td>
                     </tr>
                     {% endfor %}
