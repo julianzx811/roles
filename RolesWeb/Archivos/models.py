@@ -10,10 +10,12 @@ class Programas(models.Model):
     programa = models.CharField(default="sin programa", max_length=255, null=False)
     facultad = models.CharField(default="sin facultad", max_length=255, null=False)
 
+
 class Semestres(models.Model):
     nombre = models.CharField(default="", max_length=255, null=False)
     fecha_inicio = models.DateField(default="", max_length=255, null=False)
     fecha_fin = models.DateField(default="", max_length=255, null=False)
+
 
 class monitores(models.Model):
     nombre = models.CharField(max_length=255, null=False)
@@ -40,13 +42,14 @@ class Estudiante(models.Model):
     #     Semestres, on_delete=models.CASCADE, null=True, default=None
     # )
     periodo_lectivo = models.CharField(max_length=255, default=None, null=True)
-    #periodo_lectivo = models.CharField(max_length=255, default="2024-1", null="2024-1")
+    # periodo_lectivo = models.CharField(max_length=255, default="2024-1", null="2024-1")
     plan_estudios = models.OneToOneField(
         Plan_estudios, on_delete=models.CASCADE, null=True
     )
     docente_asignado = models.ForeignKey(
         monitores, on_delete=models.CASCADE, null=True, default=None
     )
+    estado_legalizacion = models.CharField(max_length=255, default='Incompleto', null=True)
 
 
 class Aspirantes(models.Model):
@@ -90,9 +93,12 @@ class Perfiles(models.Model):
     usuario = models.CharField(primary_key=True, max_length=255, null=False, default="")
     nombre = models.CharField(max_length=255, null=False)
     cargo = models.CharField(max_length=255, null=False)
+    correo = models.EmailField(max_length=255, null=False, default='')
+
 
 class Coordinador(models.Model):
     id_docente = models.ForeignKey(monitores, on_delete=models.CASCADE)
+
 
 class UploadedARLFile(models.Model):
     file = models.FileField(upload_to="uploads/")

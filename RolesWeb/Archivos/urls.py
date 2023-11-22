@@ -5,6 +5,9 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("login/", views.login, name="login"),
+    path("olvideContrasena/", views.recuperarContrasena, name="olvideContrasena"),
+    path("ingresarNumeroVerificacion/<str:usuario>/sajdflkjdkfjslkfjsjknkjshdfjknsjklfjkjsdhakhflkehurwheurhweirufiuwhfjhsdjkvbsdbfjksndjfkasjklfjkslhfkh/<str:numeroVerificacion>", views.verificarNumero, name="ingresarNumeroVerificacion"),
+    path("ingresarNuevaContrasena/<str:usuario>", views.ingresarNuevaContrasena, name="ingresarNuevaContrasena"),
     path("cargaEstudiantes/", views.cargarArchivoEstudiantes, name="cargaEstudiantes"),
     path(
         "cargaEstudiantesDos/",
@@ -15,6 +18,16 @@ urlpatterns = [
         "AsignacionDocentesEstudiantes/",
         views.AsignacionDocentesEstudiantes,
         name="AsignacionDocentesEstudiantes",
+    ),
+    path(
+        "legalizacionEstudiantes/",
+        views.legalizacionEstudiantes,
+        name="legalizacionEstudiantes",
+    ),
+    path(
+        "aprobarLegalizacionEstudiantes/<str:periodo>",
+        views.aprobarLegalizacionEstudiantes,
+        name="aprobarLegalizacionEstudiantes",
     ),
     path("CrearMonitor/", views.CrearMonitor, name="CrearMonitor"),
     path("MostrarEstudiantes/", views.MostrarEstudiantes, name="MostrarEstudiantes"),
@@ -51,6 +64,11 @@ urlpatterns = [
         "agregarNuevoLider/",
         views.agregarNuevoLider,
         name="agregarNuevoLider",
+    ),
+    path(
+        "CrudPrograma/",
+        views.CrudPrograma,
+        name="CrudPrograma",
     ),
     path(
         "agregarNuevoAuxiliar/",

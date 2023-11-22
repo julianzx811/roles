@@ -1,6 +1,8 @@
 import random
-
+from django.urls import reverse
+import smtplib
 import openpyxl
+import smtplib
 from django.forms.models import model_to_dict
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -23,7 +25,7 @@ def login(request):
         usuario_existe = False
         usuario = request.POST["usuario"]
         contrasena = request.POST["contrasena"]
-        cargo = request.POST.get("cargoUsuario")
+        cargo = request.POST["cargoUsuario"]
         print(usuario, contrasena, cargo)
         if Perfiles.objects.filter(usuario=usuario).exists():
             if (
@@ -62,6 +64,124 @@ def login(request):
             )
 
 
+def recuperarContrasena(request):
+    if request.method == "GET":
+        return render(request, "Archivos/olvideContrasena.html")
+    if request.method == "POST":
+        usuario_existe = False
+        correo = request.POST["usuario"]
+        if Perfiles.objects.filter(correo=correo).exists():
+            print("Hola, si existes")
+            usuario = correo.split("@")[0]
+            numeroVerificacion = random.randrange(100000,999999)
+            email_usuario = Perfiles.objects.filter(usuario=usuario)[0].correo
+            smtp_server = 'smtp.office365.com'
+            smtp_port = 587
+
+            sender = 'smartinezs2@correo.usbcali.edu.co'
+            contraseña = 'Usb30000062842'
+
+
+            receivers = [email_usuario]
+            message = """\
+            Subject: Codigo de Verificacion
+
+            Hola, soy el sistema de seguimiento de practicas. Has solicitado un cambio de contrasena, el numero de verificacion es""" + str(numeroVerificacion)+ """.
+            Espero haberte ayudado
+            """
+
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls()
+            server.login(sender, contraseña)
+            server.sendmail(sender, receivers, message)
+            server.quit()
+            return redirect(verificarNumero, usuario = correo.split("@")[0], numeroVerificacion=numeroVerificacion)
+        else:
+            usuario_existe = True
+            return render(
+                request,
+                "Archivos/olvideContrasena.html",
+                {"usuario_existe":usuario_existe},
+            )
+
+
+def verificarNumero(request, usuario, numeroVerificacion):
+
+    if request.method == 'POST':
+        ingresado = request.POST['numeroVerificacionIngresado']
+        print(ingresado,numeroVerificacion)
+        if ingresado == numeroVerificacion:
+            return redirect(ingresarNuevaContrasena, usuario = usuario)
+        else:
+            print("Intenta de nuevo")
+            autenticacion_fallo = True
+            return render(
+                request,
+                "Archivos/ingresarNumeroVerificacion.html",{"autenticacion_fallo":autenticacion_fallo}
+            )
+    return render(
+                request,
+                "Archivos/ingresarNumeroVerificacion.html",
+    )
+        
+    
+
+def ingresarNuevaContrasena(request, usuario):
+    if request.method == 'POST':
+        contrasenaNueva = request.POST['contrasena1']
+        contrasenaVerificar = request.POST['contrasena2']
+        if contrasenaNueva == contrasenaVerificar:
+            contrasenas_coinciden = True
+            Perfiles.objects.filter(usuario=usuario).update(contrasena = contrasenaNueva)
+            return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",{"contrasenas_coinciden":contrasenas_coinciden}
+            )
+        else:
+            contrasenas_coinciden = False
+            return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",{"contrasenas_coinciden":contrasenas_coinciden}
+            )
+
+    return render(
+                request,
+                "Archivos/ingresarNuevaContrasena.html",
+            )
+
+def legalizacionEstudiantes(request):
+    if request.method == "GET":
+        semestres = Semestres.objects.all()
+        print(semestres)
+        return render(
+            request,
+            "Archivos/legalizacionEstudiantes.html", {"semestres":semestres}
+        )
+    elif request.method == "POST":
+        periodo = request.POST['periodo_lectivo']
+        if 'uno' in request.POST:    
+            return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return render(
+            request, "Archivos/legalizacionEstudiantes.html"
+        )
+    
+def aprobarLegalizacionEstudiantes(request, periodo):
+    if request.method == "GET":
+        estudiantes = Estudiante.objects.filter(periodo_lectivo = periodo , estado_legalizacion = 'Pendiente')
+        return render(
+            request,
+            "Archivos/aprobarLegalizacionEstudiantes.html", {'estudiantes':estudiantes}
+        )
+    elif request.method == "POST":
+        
+        codigo = request.POST['aprobarPractica']
+        Estudiante.objects.filter(codigo = codigo).update(estado_legalizacion = 'Aprobado')
+
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+    else:
+        return redirect(aprobarLegalizacionEstudiantes, periodo = periodo)
+
 def AsignacionDocentesEstudiantes(request):
     mostrar = None
     if request.method == "GET":
@@ -69,7 +189,9 @@ def AsignacionDocentesEstudiantes(request):
         mostrar = None
         print(semestres)
         return render(
-            request, "Archivos/asignacionDocentesEstudiantes.html", {"mostrar": mostrar, "semestres": semestres}
+            request,
+            "Archivos/asignacionDocentesEstudiantes.html",
+            {"mostrar": mostrar, "semestres": semestres},
         )
     elif request.method == "POST":
         mostrar = None
@@ -125,10 +247,7 @@ def CrearMonitor(request):
         usuario = request.POST["correo"].split("@")[0]
         print(usuario)
         if form.is_valid():
-            if (
-                Perfiles.objects.filter(usuario=usuario).exists()
-                == False
-            ):
+            if Perfiles.objects.filter(usuario=usuario).exists() == False:
                 Nombre = request.POST["nombre"]
                 Codigo = request.POST["codigo"]
                 Correo = request.POST["correo"]
@@ -148,6 +267,7 @@ def CrearMonitor(request):
                     contrasena=Codigo,
                     nombre=Nombre,
                     cargo="Docente Monitor",
+                    correo=Correo
                 )
                 perfil.save()
                 creaMonitor = True
@@ -224,6 +344,7 @@ def indexOficinaPracticas(request):
         {"archivo_subido": archivo_subido, "existe": existe},
     )
 
+
 def indexAuxiliarOficinaPracticas(request):
     existe = Estudiante.objects.exists()
     return render(
@@ -231,6 +352,7 @@ def indexAuxiliarOficinaPracticas(request):
         "Archivos/vistaAuxiliarOficinaPracticas.html",
         {"archivo_subido": archivo_subido, "existe": existe},
     )
+
 
 def indexDocenteMonitor(request):
     existe = Estudiante.objects.exists()
@@ -254,6 +376,7 @@ def indexEstudiante(request, estudiante_id):
         },
     )
 
+
 def indexAdministrador(request):
     existe = Estudiante.objects.exists()
     return render(
@@ -272,13 +395,10 @@ def agregarNuevoLider(request):
     else:
         creaLiderOficina = False
         liderExiste = False
-        
+
         usuario = request.POST["correo"].split("@")[0]
-       
-        if (
-            Perfiles.objects.filter(usuario=usuario).exists()
-            == False
-        ):
+
+        if Perfiles.objects.filter(usuario=usuario).exists() == False:
             Nombre = request.POST["nombre"]
             Codigo = request.POST["codigo"]
             Correo = request.POST["correo"]
@@ -287,6 +407,7 @@ def agregarNuevoLider(request):
                 contrasena=Codigo,
                 nombre=Nombre,
                 cargo="Lider Oficina de Practicas",
+                correo=Correo
             )
             perfil.save()
             creaLiderOficina = True
@@ -294,12 +415,10 @@ def agregarNuevoLider(request):
             liderExiste = True
         return render(
             request,
-             "Archivos/CrearLiderOficina.html",
-            {
-                "creaLiderOficina": creaLiderOficina,
-                "liderExiste": liderExiste
-            },
+            "Archivos/CrearLiderOficina.html",
+            {"creaLiderOficina": creaLiderOficina, "liderExiste": liderExiste},
         )
+
 
 def agregarNuevoAuxiliar(request):
     if request.method == "GET":
@@ -307,13 +426,10 @@ def agregarNuevoAuxiliar(request):
     else:
         creaAuxiliarOficina = False
         auxiliarExiste = False
-        
+
         usuario = request.POST["correo"].split("@")[0]
-       
-        if (
-            Perfiles.objects.filter(usuario=usuario).exists()
-            == False
-        ):
+
+        if Perfiles.objects.filter(usuario=usuario).exists() == False:
             Nombre = request.POST["nombre"]
             Codigo = request.POST["codigo"]
             Correo = request.POST["correo"]
@@ -322,6 +438,7 @@ def agregarNuevoAuxiliar(request):
                 contrasena=Codigo,
                 nombre=Nombre,
                 cargo="Lider Oficina de Practicas",
+                correo=Correo
             )
             perfil.save()
             creaAuxiliarOficina = True
@@ -329,12 +446,13 @@ def agregarNuevoAuxiliar(request):
             auxiliarExiste = True
         return render(
             request,
-             "Archivos/CrearAuxiliarOficina.html",
+            "Archivos/CrearAuxiliarOficina.html",
             {
                 "creaAuxiliarOficina": creaAuxiliarOficina,
-                "auxiliarExiste": auxiliarExiste
+                "auxiliarExiste": auxiliarExiste,
             },
         )
+
 
 def asignarNuevoCoordinador(request):
     docentes = monitores.objects.filter()
@@ -359,6 +477,7 @@ def asignarNuevoCoordinador(request):
                 contrasena=monitor.codigo,
                 nombre=monitor.nombre,
                 cargo="Coordinador",
+                correo=correo
             )
             perfil.save()
             creaMonitor = True
@@ -442,6 +561,15 @@ def cargarArchivoEstudiantes(request):
                             telefono=datos[5],
                             nombre=datos[6],
                         )
+                        perfil = Perfiles(
+                        usuario=datos[3].split("@")[0],
+                        contrasena=datos[2],
+                        nombre=datos[6],
+                        cargo="Practicante",
+                        correo=datos[3]
+                        )
+                        perfil.save()
+                        
                 else:
                     est1 = Estudiante(
                         codigo=datos[2],
@@ -459,7 +587,8 @@ def cargarArchivoEstudiantes(request):
                         usuario=datos[3].split("@")[0],
                         contrasena=datos[2],
                         nombre=datos[6],
-                        cargo="Estudiante",
+                        cargo="Practicante",
+                        correo=datos[3]
                     )
                     perfil.save()
             return render(
@@ -484,19 +613,34 @@ def cargarArchivoEstudiantesDos(request):
     semestre_no_existe = False
     if request.method == "GET":
         semestre = Semestres.objects.all()
-        return render(request, "Archivos/CargaEstudiantesDos.html", {"semestre": semestre})
+        return render(
+            request, "Archivos/CargaEstudiantesDos.html", {"semestre": semestre}
+        )
     else:
         try:
             periodo = request.POST.get("file_type")
             semestre_seleccionado = Semestres.objects.get(id=periodo)
-            print(len(Estudiante.objects.filter(periodo_lectivo=semestre_seleccionado.nombre)))
-            if len(Estudiante.objects.filter(periodo_lectivo=semestre_seleccionado.nombre)) != 0:
+            print(
+                len(
+                    Estudiante.objects.filter(
+                        periodo_lectivo=semestre_seleccionado.nombre
+                    )
+                )
+            )
+            if (
+                len(
+                    Estudiante.objects.filter(
+                        periodo_lectivo=semestre_seleccionado.nombre
+                    )
+                )
+                != 0
+            ):
                 actualizados = 0
                 excel_file = request.FILES["excel_file"]
                 wb = openpyxl.load_workbook(excel_file)
                 worksheet = wb["ING SISTEMAS 2023 2"]
                 excel_data = []
-                
+
                 for row in worksheet.iter_rows(min_row=4, max_col=28):
                     row_data = []
                     for cell in row:
@@ -586,7 +730,9 @@ def cargarArchivoEstudiantesDos(request):
                             # Crear un objeto Estado_Practica relacionado con el estudiante, Aspirantes y Contrato
                             estado_practica = Estado_Practica(
                                 codigo_estudiante=estudiante,
-                                practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[18],
+                                practica_Donde_Labora_EmpresaFliar_Emprendim_Otro=row[
+                                    18
+                                ],
                                 estado_ubicación=row[19],
                                 comentarios=row[20],
                                 item=aspirantes,
@@ -604,14 +750,12 @@ def cargarArchivoEstudiantesDos(request):
                                 },
                             )
             else:
-              semestre_no_existe = True
-              return render(
-                request,
-                "Archivos/CargaEstudiantesDos.html",
-                {
-                    "semestre_no_existe": semestre_no_existe
-                },
-            )  
+                semestre_no_existe = True
+                return render(
+                    request,
+                    "Archivos/CargaEstudiantesDos.html",
+                    {"semestre_no_existe": semestre_no_existe},
+                )
             return render(
                 request,
                 "Archivos/CargaEstudiantesDos.html",
@@ -790,6 +934,10 @@ def SubirDocumentoEPS(request, estudiante_id):
 
 
 def DocumentosSubidos(request, estudiante_id):
+    if len(UploadedEPSFile.objects.filter(estudianteId_id = estudiante_id)) > 0 and len(UploadedLABORALFile.objects.filter(estudianteId_id = estudiante_id)) > 0:
+        estudiante = Estudiante.objects.filter(email_institucional = Perfiles.objects.filter(usuario = estudiante_id)[0].correo)
+        estudiante.update(estado_legalizacion = 'Pendiente')
+    
     return list_files(request, estudiante_id)
 
 

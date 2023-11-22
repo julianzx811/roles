@@ -147,13 +147,7 @@
                 <div class="form-container">
                     <!-- Resto del contenido -->
                     <table class="program-table">
-                        <thead>
-                            <tr>
-                                <th>Programa</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        {% if funciono %}
+                       {% if funciono %}
                         <h1>{{funciono}}</h1>
                         {% endif %}
                         {% if error %}
@@ -164,6 +158,7 @@
                             {% for CurrentPrograma in programas %}
                                 <tr>
                                     <td>{{ CurrentPrograma.programa }}</td>
+                                    <td>{{ CurrentPrograma.facultad}}</td>
                                     <td>
                                         <a class="button edit-button" href="{% url 'UpdatePrograma' CurrentPrograma.id %}">Edit</a>
                                         <a class="button delete-button" href="{% url 'DeletePrograma'  CurrentPrograma.id %}">Delete</a>
